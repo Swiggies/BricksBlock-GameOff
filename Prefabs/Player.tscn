@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Camera.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/RayCastTest.gd" type="Script" id=3]
+
+[sub_resource type="CapsuleShape" id=1]
+
+[node name="KinematicPlayer" type="KinematicBody"]
+script = ExtResource( 1 )
+speed = 5
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
+shape = SubResource( 1 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0 )
+keep_aspect = 0
+fov = 100.0
+script = ExtResource( 2 )
+sensitivty = 0.5
+
+[node name="Tween" type="Tween" parent="Camera"]
+
+[node name="RayCast" type="RayCast" parent="."]
+enabled = true
+cast_to = Vector3( -1, 0, 0 )
+script = ExtResource( 3 )
+[connection signal="on_wallrun" from="." to="Camera" method="on_wallrun"]
+[connection signal="tween_started" from="Camera/Tween" to="Camera" method="_on_tween_started"]
+[connection signal="on_hit" from="RayCast" to="." method="on_hit"]
