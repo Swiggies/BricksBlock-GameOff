@@ -1,6 +1,6 @@
 extends KinematicBody
 
-export var speed = 10
+export var speed = 5
 export var gravity = -9.8
 export var jump_force = 5
 export var accelleration = 4.5
@@ -12,6 +12,7 @@ var wallrun_dir
 
 var direction : Vector3
 var vel : Vector3
+var wall_normal : Vector3
 var ray_hit : bool
 
 # Called when the node enters the scene tree for the first time.
@@ -27,6 +28,8 @@ func wallrun():
 	emit_signal("on_wallrun", wallrun_dir, ray_hit)
 	if(ray_hit):
 		vel.y = 0
+		var dir_dot = wall_normal.dot(transform.basis.x)
+		direction = wall_normal.cross(transform.basis.y) * -round(dir_dot)
 	
 func process_movement(delta):	
 	direction.y = 0
@@ -81,3 +84,4 @@ func _physics_process(delta):
 func on_hit(hit, dir, normal):
 	ray_hit = hit
 	wallrun_dir = dir
+	wall_normal = normal

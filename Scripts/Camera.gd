@@ -29,7 +29,8 @@ func _input(event):
 		
 func rotate_cam_x(x_rotation):
 	rotate_x(x_rotation / 100)
-	rotation_degrees.x = clamp(rotation_degrees.x, -90, 90)
+	rotation_degrees.x = clamp(rotation_degrees.x, -89, 90)	
+	#rotation_degrees.x = clamp(rotation_degrees.x, -89, 90)
 	
 func rotate_cam_y(y_rotation):
 	get_parent_spatial().rotate_y(y_rotation / 100)
