@@ -5,6 +5,7 @@ export var gravity = -9.8
 export var jump_force = 5
 export var accelleration = 4.5
 export var decelleration = 14
+export var kick_force = 50
 
 var percent_health
 var camera
@@ -31,6 +32,8 @@ func wallrun():
 		vel.y = 0
 		var dir_dot = wall_normal.dot(transform.basis.x)
 		direction = wall_normal.cross(transform.basis.y) * -round(dir_dot)
+		if Input.is_action_just_pressed("ui_accept"):
+			vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + Vector3.UP * 5
 	
 func process_movement(delta):	
 	direction.y = 0
@@ -53,7 +56,7 @@ func process_movement(delta):
 	hvel = hvel.linear_interpolate(target, accel * delta)
 	vel.x = hvel.x
 	vel.z = hvel.z
-	vel = move_and_slide(vel, Vector3(0,1,0), 0.05, 4, deg2rad(65))
+	vel = move_and_slide(vel, Vector3.UP, 0.05, 4, deg2rad(65))
 	
 func process_input(delta):
 	direction = Vector3()
@@ -68,7 +71,6 @@ func process_input(delta):
 		input_movement.x += 1
 	if Input.is_action_pressed("move_left"):
 		input_movement.x -= 1
-	
 		
 	input_movement = input_movement.normalized()
 	
