@@ -6,6 +6,7 @@ export var jump_force = 5
 export var accelleration = 4.5
 export var decelleration = 14
 
+var percent_health
 var camera
 signal on_wallrun
 var wallrun_dir
@@ -76,6 +77,11 @@ func process_input(delta):
 	
 	if Input.is_action_just_pressed("ui_accept"):
 		vel.y = jump_force
+
+func knockback(dir):
+	#when you get hit override the input
+	#lower/higher% health makes ytou lose control for longer
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):

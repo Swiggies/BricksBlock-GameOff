@@ -20,5 +20,5 @@ func _physics_process(delta):
 			cast_to = Vector3(1,0,0) * ray_distance
 		else:
 			cast_to = Vector3.ZERO
-
+			
 		emit_signal("on_hit", is_colliding(), cast_to, get_collision_normal())
