@@ -1,5 +1,7 @@
 extends KinematicBody
 
+static var currentNumberOfPlayer = 0;
+
 export var speed = 10
 export var gravity = -9.8
 export var jump_force = 5
@@ -16,6 +18,7 @@ var ray_hit : bool
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	#self.connect("on_wallrun", get_node("/root/Spatial/TopLeftVC/Viewport/Camera"), "on_wallrun")
 	pass
 
 func _process(delta):

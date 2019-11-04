@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scripts/MenuPlayerSelection.gd" type="Script" id=1]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="2 Players" type="Button" parent="."]
+margin_left = 109.0
+margin_top = 63.0
+margin_right = 937.0
+margin_bottom = 203.0
+text = "2 Players"
+script = ExtResource( 1 )
+
+[node name="4 Players" type="Button" parent="."]
+margin_left = 113.0
+margin_top = 281.0
+margin_right = 941.0
+margin_bottom = 421.0
+text = "4 Players"
+[connection signal="pressed" from="2 Players" to="2 Players" method="OnPress"]

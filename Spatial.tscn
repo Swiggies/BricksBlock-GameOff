@@ -35,7 +35,7 @@ size = Vector3( 20, 2, 20 )
 
 [sub_resource type="CylinderShape" id=8]
 
-[node name="Spatial" type="Spatial"]
+[node name="Spatial123" type="Spatial"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 2 )
@@ -72,6 +72,7 @@ transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0 )
 shape = SubResource( 6 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
+editor/display_folded = true
 transform = Transform( 2, 0, 0, 0, 4.44, 0, 0, 0, 2, -8.00203, 5.3019, -0.042841 )
 mesh = SubResource( 7 )
 material/0 = null
@@ -82,6 +83,7 @@ material/0 = null
 shape = SubResource( 8 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="."]
+editor/display_folded = true
 transform = Transform( 2, 0, 0, 0, 4.44, 0, 0, 0, 2, -5.74084, 5.3019, 8.15936 )
 mesh = SubResource( 7 )
 material/0 = null
@@ -90,3 +92,4 @@ material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance2/StaticBody"]
 shape = SubResource( 8 )
+[connection signal="on_wallrun" from="KinematicPlayer" to="KinematicPlayer/ViewportContainer/Viewport/Camera" method="on_wallrun"]
