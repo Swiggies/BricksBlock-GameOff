@@ -1,6 +1,5 @@
 extends KinematicBody
 
-static var currentNumberOfPlayer = 0;
 
 export var speed = 10
 export var gravity = -9.8

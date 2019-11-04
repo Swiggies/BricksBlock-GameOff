@@ -32,10 +32,7 @@ func _input(event):
 		rotate_cam_y(-position.x)
 		
 func rotate_cam_x(x_rotation):
-	rotate_x(x_rotation / 100)
-	rotation_degrees.x = clamp(rotation_degrees.x, -90, 90)
-	#Player.rotation_degrees.x = clamp(Player.rotation_degrees.x + rad2deg(x_rotation / 100), -90, 90)
-	#pass
+	rotation_degrees.x = clamp(rotation_degrees.x + rad2deg(x_rotation / 100), -90, 90)
 	
 func rotate_cam_y(y_rotation):
 	get_parent().get_parent().get_parent().rotate_y(y_rotation / 100)
