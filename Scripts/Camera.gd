@@ -3,7 +3,6 @@ extends Camera
 export var sensitivty = 0.1
 
 onready var TweenNode = get_node("Tween")
-#onready var Player = get_node("/root/Spatial/KinematicPlayer") as KinematicBody
 var start_y
 var timer = 0
 var is_tweening = false
@@ -17,9 +16,6 @@ func _ready():
 ## Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	timer += delta * 5
-	#translate(Vector3(0, start_y + sin(timer) * 0.3,0) * delta)
-	#transform = Player.transform
-	#transform.origin = Player.transform.origin
 	translation = get_parent().get_parent().get_parent().translation
 	rotation.y = get_parent().get_parent().get_parent().rotation.y
 	
@@ -36,8 +32,6 @@ func rotate_cam_x(x_rotation):
 	
 func rotate_cam_y(y_rotation):
 	get_parent().get_parent().get_parent().rotate_y(y_rotation / 100)
-	#get_tree().get_root().rotate_y(y_rotation / 100)
-	#Player.rotate_y(y_rotation / 100)
 
 func on_wallrun(dir, ray_hit):
 	if ray_hit == true:

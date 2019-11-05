@@ -13,11 +13,15 @@ margin_right = 937.0
 margin_bottom = 203.0
 text = "2 Players"
 script = ExtResource( 1 )
+NumberOfPlayers = 2
 
 [node name="4 Players" type="Button" parent="."]
-margin_left = 113.0
-margin_top = 281.0
-margin_right = 941.0
-margin_bottom = 421.0
+margin_left = 109.0
+margin_top = 287.85
+margin_right = 937.0
+margin_bottom = 427.85
 text = "4 Players"
+script = ExtResource( 1 )
+NumberOfPlayers = 4
 [connection signal="pressed" from="2 Players" to="2 Players" method="OnPress"]
+[connection signal="pressed" from="4 Players" to="4 Players" method="OnPress"]

@@ -16,8 +16,17 @@ _global_script_class_icons={
 [application]
 
 config/name="BricksBlock-GameOff"
-run/main_scene="res://Spatial.tscn"
+run/main_scene="res://Menu.tscn"
 config/icon="res://Textures/icon.png"
+
+[autoload]
+
+PlayerVariables="*res://Scripts/PlayerVariables.gd"
+
+[display]
+
+window/size/width=1200
+window/size/height=800
 
 [input]
 
