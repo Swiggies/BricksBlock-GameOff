@@ -1,8 +1,5 @@
 extends Camera
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 export var sensitivty = 0.1
 
 onready var TweenNode = get_node("Tween")
@@ -16,11 +13,14 @@ var camera_raycyast : RayCast
 func _ready():
 	start_y = translation.y
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	translation = get_parent().get_parent().get_parent().translation
 
 ## Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	timer += delta * 5
-#	translate(Vector3(0, start_y + sin(timer) * 0.3,0) * delta)
+	translation = get_parent().get_parent().get_parent().translation
+	rotation.y = get_parent().get_parent().get_parent().rotation.y
+	
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -43,7 +43,7 @@ func rotate_cam_x(x_rotation):
 	rotation_degrees.x = clamp(rotation_degrees.x + rad2deg(x_rotation / 100), -90, 90)
 	
 func rotate_cam_y(y_rotation):
-	get_parent_spatial().rotate_y(y_rotation / 100)
+	get_parent().get_parent().get_parent().rotate_y(y_rotation / 100)
 
 func on_wallrun(dir, ray_hit):
 	if ray_hit == true:
@@ -55,3 +55,11 @@ func on_wallrun(dir, ray_hit):
 
 func _on_tween_started(object, key):
 	is_tweening = true
+
+
+func _on_Tween_tween_started(object, key):
+	pass # Replace with function body.
+
+
+func _on_KinematicPlayer_on_wallrun():
+	pass # Replace with function body.

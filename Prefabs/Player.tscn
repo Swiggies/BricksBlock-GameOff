@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/Camera.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/PlayerBodyRaycast.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/RayCastTest.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/Camera.gd" type="Script" id=3]
 
 [sub_resource type="CapsuleShape" id=1]
 
@@ -20,32 +20,27 @@ kick_force = 20
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
 shape = SubResource( 1 )
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0 )
-keep_aspect = 0
-fov = 100.0
-script = ExtResource( 2 )
-sensitivty = 0.5
-
-[node name="Tween" type="Tween" parent="Camera"]
-
 [node name="RayCast" type="RayCast" parent="."]
 enabled = true
 cast_to = Vector3( -1, 0, 0 )
-script = ExtResource( 3 )
-resource_shape = SubResource( 3 )
+script = ExtResource( 2 )
 
-[node name="Control" type="Control" parent="."]
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
+stretch = true
 
-[node name="TextureRect" type="TextureRect" parent="Control"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-rect_pivot_offset = Vector2( 3, 3 )
-texture = SubResource( 2 )
-[connection signal="on_wallrun" from="." to="Camera" method="on_wallrun"]
-[connection signal="tween_started" from="Camera/Tween" to="Camera" method="_on_tween_started"]
+[node name="Viewport" type="Viewport" parent="ViewportContainer"]
+size = Vector2( 1200, 800 )
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="Camera" type="Camera" parent="ViewportContainer/Viewport"]
+current = true
+script = ExtResource( 3 )
+
+[node name="Tween" type="Tween" parent="ViewportContainer/Viewport/Camera"]
+[connection signal="on_wallrun" from="." to="ViewportContainer/Viewport/Camera" method="on_wallrun"]
 [connection signal="on_hit" from="RayCast" to="." method="on_hit"]
+[connection signal="tween_started" from="ViewportContainer/Viewport/Camera/Tween" to="ViewportContainer/Viewport/Camera" method="_on_tween_started"]

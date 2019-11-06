@@ -25,14 +25,55 @@ var wall_normal : Vector3
 var ray_hit : bool
 var input_movement : Vector2
 
+onready var player_variables = get_node("/root/PlayerVariables")
+var myPlayerNumber = -1
+
+onready var myViewportContainer = get_node("ViewportContainer")
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	default_acceleration = accelleration
 	default_decelleration = decelleration
 	default_speed = speed
-	pass
+	myPlayerNumber = player_variables.GetPlayerNumber()
+	setUpInitPosition()
+	setUpViewport()
 
-func _physics_process(delta):
+func setUpInitPosition():
+	# Random position to prevent the player from colliding into each other and get thrown off due to physics
+	# A Temp Fix. Should be spawned at predetermined designated positions 
+	translation = Vector3(rand_range(-5, 5), 1, rand_range(-5, 5))
+	rotation = Vector3.ZERO
+	
+
+func setUpViewport():
+	# Legacy Code - Deletes any extra player instantiated
+	if myPlayerNumber < 0 or myPlayerNumber > player_variables.NumberOfPlayers - 1:
+		queue_free()
+	
+	# Set the anchor
+	myViewportContainer.anchor_left = 0 if myPlayerNumber % 2 == 0 else 0.5
+	myViewportContainer.anchor_right = 1 if myPlayerNumber % 2 == 1 else 0.5
+	myViewportContainer.anchor_top = 0 if myPlayerNumber < 2 else 0.5
+	myViewportContainer.anchor_bottom = 0 if myPlayerNumber < 2 else 0.5
+	
+	# Set Viewport Size (as all will have the same view port size, this could be calculated just once
+	# Though there's much of a performance hit either way
+	var size = get_viewport().size
+	var viewportSize = size
+	viewportSize.x /= 2
+	viewportSize.y /= 1 if player_variables.NumberOfPlayers == 2 else 2
+	myViewportContainer.rect_size = viewportSize
+	
+	# Set Position
+	myViewportContainer.rect_position.x = 0 if myPlayerNumber % 2 == 0 else viewportSize.x
+	myViewportContainer.rect_position.y = 0 if myPlayerNumber < 2 else viewportSize.y
+
+func _process(delta):
+	# TODO: Remove this once the controllers have been set up to accept input only from the correct device
+	if myPlayerNumber != 0:
+		return
+
 	process_input(delta)
 	wallrun()
 	process_movement(delta)
