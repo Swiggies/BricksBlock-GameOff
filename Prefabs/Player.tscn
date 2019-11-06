@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=2]
@@ -6,13 +6,15 @@
 
 [sub_resource type="CapsuleShape" id=1]
 
+[sub_resource type="BoxShape" id=3]
+
 [sub_resource type="NoiseTexture" id=2]
 width = 6
 height = 6
 
 [node name="KinematicPlayer" type="KinematicBody"]
 script = ExtResource( 1 )
-kick_force = 25
+kick_force = 20
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
@@ -31,6 +33,7 @@ sensitivty = 0.5
 enabled = true
 cast_to = Vector3( -1, 0, 0 )
 script = ExtResource( 3 )
+resource_shape = SubResource( 3 )
 
 [node name="Control" type="Control" parent="."]
 anchor_right = 1.0

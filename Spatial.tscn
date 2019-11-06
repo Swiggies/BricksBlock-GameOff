@@ -11,7 +11,6 @@ background_sky = SubResource( 1 )
 ambient_light_color = Color( 1, 1, 1, 1 )
 fog_enabled = true
 tonemap_mode = 3
-ss_reflections_enabled = true
 ssao_enabled = true
 ssao_intensity = 0.5
 ssao_radius2 = 10.0
@@ -72,7 +71,7 @@ transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0 )
 shape = SubResource( 6 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 2, 0, 0, 0, 4.44, 0, 0, 0, 2, -8.00203, 5.3019, -0.042841 )
+transform = Transform( 5, 0, 0, 0, 4.44, 0, 0, 0, 5, -8.2064, 5.3019, -7.51209 )
 mesh = SubResource( 7 )
 material/0 = null
 
@@ -82,7 +81,7 @@ material/0 = null
 shape = SubResource( 8 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="."]
-transform = Transform( 2, 0, 0, 0, 4.44, 0, 0, 0, 2, -5.74084, 5.3019, 8.15936 )
+transform = Transform( 5, 0, 0, 0, 4.44, 0, 0, 0, 5, -9.33279, 5.3019, 11.4021 )
 mesh = SubResource( 7 )
 material/0 = null
 

@@ -4,6 +4,7 @@ extends RayCast
 # var a = 2
 # var b = "text"
 const ray_distance = 1
+export var resource_shape : Resource
 
 signal on_hit
 var input_vector : Vector2

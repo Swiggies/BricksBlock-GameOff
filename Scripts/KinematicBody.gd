@@ -7,6 +7,13 @@ export var accelleration = 4.5
 export var decelleration = 14
 export var kick_force = 50
 
+var default_acceleration
+var default_decelleration
+var default_speed
+
+var air_decelleration = 4.5
+var air_acceleration = 4.5
+
 var percent_health
 var camera
 signal on_wallrun
@@ -16,12 +23,16 @@ var direction : Vector3
 var vel : Vector3
 var wall_normal : Vector3
 var ray_hit : bool
+var input_movement : Vector2
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	default_acceleration = accelleration
+	default_decelleration = decelleration
+	default_speed = speed
 	pass
 
-func _process(delta):
+func _physics_process(delta):
 	process_input(delta)
 	wallrun()
 	process_movement(delta)
@@ -29,11 +40,17 @@ func _process(delta):
 func wallrun():
 	emit_signal("on_wallrun", wallrun_dir, ray_hit)
 	if(ray_hit):
+		accelleration = air_acceleration
+		decelleration = air_decelleration
+		
 		vel.y = 0
 		var dir_dot = wall_normal.dot(transform.basis.x)
 		direction = wall_normal.cross(transform.basis.y) * -round(dir_dot)
 		if Input.is_action_just_pressed("ui_accept"):
-			vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + Vector3.UP * 5
+			vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
+	elif is_on_floor():
+		accelleration = default_acceleration
+		decelleration = default_decelleration
 	
 func process_movement(delta):	
 	direction.y = 0
@@ -56,13 +73,10 @@ func process_movement(delta):
 	hvel = hvel.linear_interpolate(target, accel * delta)
 	vel.x = hvel.x
 	vel.z = hvel.z
-	vel = move_and_slide(vel, Vector3.UP, 0.05, 4, deg2rad(65))
-	
-func process_input(delta):
-	direction = Vector3()
-	
-	var input_movement = Vector2()
-	
+	vel = move_and_slide(vel, Vector3(0,1,0), 0.05, 4, deg2rad(65))
+
+func _input(event):
+	input_movement = Vector2.ZERO
 	if Input.is_action_pressed("move_forward"):
 		input_movement.y += 1
 	if Input.is_action_pressed("move_back"):
@@ -71,6 +85,9 @@ func process_input(delta):
 		input_movement.x += 1
 	if Input.is_action_pressed("move_left"):
 		input_movement.x -= 1
+
+func process_input(delta):
+	direction = Vector3()
 		
 	input_movement = input_movement.normalized()
 	
@@ -84,10 +101,6 @@ func knockback(dir):
 	#when you get hit override the input
 	#lower/higher% health makes ytou lose control for longer
 	pass
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta):
-	direction = move_and_slide(direction)
 
 func on_hit(hit, dir, normal):
 	ray_hit = hit
