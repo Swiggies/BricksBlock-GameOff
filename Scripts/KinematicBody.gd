@@ -29,20 +29,28 @@ onready var player_variables = get_node("/root/PlayerVariables")
 var myPlayerNumber = -1
 
 onready var myViewportContainer = get_node("ViewportContainer")
+onready var my_mesh = get_node("MeshInstance")
+
+var controller_sensitivty = -5
+const deadzone = 0.1
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+#	Used for splitscreensetup
+#	myPlayerNumber = player_variables.GetPlayerNumber()
+	setUpInitPosition()
+	setUpViewport()
+	
+#	Setting some defaults used for wallrunning
 	default_acceleration = accelleration
 	default_decelleration = decelleration
 	default_speed = speed
-	myPlayerNumber = player_variables.GetPlayerNumber()
-	setUpInitPosition()
-	setUpViewport()
+	my_mesh.layers = myPlayerNumber * 2 + 2
 
 func setUpInitPosition():
 	# Random position to prevent the player from colliding into each other and get thrown off due to physics
 	# A Temp Fix. Should be spawned at predetermined designated positions 
-	translation = Vector3(rand_range(-5, 5), 1, rand_range(-5, 5))
+	# translation = Vector3(rand_range(-5, 5), 1, rand_range(-5, 5))
 	rotation = Vector3.ZERO
 	
 
@@ -70,10 +78,6 @@ func setUpViewport():
 	myViewportContainer.rect_position.y = 0 if myPlayerNumber < 2 else viewportSize.y
 
 func _process(delta):
-	# TODO: Remove this once the controllers have been set up to accept input only from the correct device
-	if myPlayerNumber != 0:
-		return
-
 	process_input(delta)
 	wallrun()
 	process_movement(delta)
@@ -87,8 +91,13 @@ func wallrun():
 		vel.y = 0
 		var dir_dot = wall_normal.dot(transform.basis.x)
 		direction = wall_normal.cross(transform.basis.y) * -round(dir_dot)
-		if Input.is_action_just_pressed("ui_accept"):
-			vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
+		if myPlayerNumber == 0:
+			if Input.is_action_just_pressed("ui_accept"):
+				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
+		else:
+			if Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
+				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
+				
 	elif is_on_floor():
 		accelleration = default_acceleration
 		decelleration = default_decelleration
@@ -116,26 +125,33 @@ func process_movement(delta):
 	vel.z = hvel.z
 	vel = move_and_slide(vel, Vector3(0,1,0), 0.05, 4, deg2rad(65))
 
-func _input(event):
-	input_movement = Vector2.ZERO
-	if Input.is_action_pressed("move_forward"):
-		input_movement.y += 1
-	if Input.is_action_pressed("move_back"):
-		input_movement.y -= 1
-	if Input.is_action_pressed("move_right"):
-		input_movement.x += 1
-	if Input.is_action_pressed("move_left"):
-		input_movement.x -= 1
-
 func process_input(delta):
 	direction = Vector3()
+		
+	input_movement = Vector2()
+	
+	if myPlayerNumber == 0:
+		if Input.is_action_pressed("move_forward"):
+			input_movement.y += 1
+		if Input.is_action_pressed("move_back"):
+			input_movement.y -= 1
+		if Input.is_action_pressed("move_right"):
+			input_movement.x += 1
+		if Input.is_action_pressed("move_left"):
+			input_movement.x -= 1
+	else:
+		if abs(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LX)) > deadzone or abs(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LY)) > deadzone:
+			input_movement = Vector2(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LX), -Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LY))
 		
 	input_movement = input_movement.normalized()
 	
 	direction += -transform.basis.z * input_movement.y
 	direction += transform.basis.x * input_movement.x
 	
-	if Input.is_action_just_pressed("ui_accept"):
+	if myPlayerNumber == 0:
+		if Input.is_action_just_pressed("ui_accept"):
+			vel.y = jump_force
+	elif Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
 		vel.y = jump_force
 
 func knockback(dir):
