@@ -6,22 +6,44 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 
+[node name="1 Players" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -414.0
+margin_top = -260.0
+margin_right = 414.0
+margin_bottom = -120.0
+text = "1 Players"
+script = ExtResource( 1 )
+NumberOfPlayers = 1
+
 [node name="2 Players" type="Button" parent="."]
-margin_left = 109.0
-margin_top = 63.0
-margin_right = 937.0
-margin_bottom = 203.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -414.0
+margin_top = -70.0
+margin_right = 414.0
+margin_bottom = 70.0
 text = "2 Players"
 script = ExtResource( 1 )
 NumberOfPlayers = 2
 
 [node name="4 Players" type="Button" parent="."]
-margin_left = 109.0
-margin_top = 287.85
-margin_right = 937.0
-margin_bottom = 427.85
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -414.0
+margin_top = 120.0
+margin_right = 414.0
+margin_bottom = 260.0
 text = "4 Players"
 script = ExtResource( 1 )
 NumberOfPlayers = 4
+[connection signal="pressed" from="1 Players" to="1 Players" method="OnPress"]
 [connection signal="pressed" from="2 Players" to="2 Players" method="OnPress"]
 [connection signal="pressed" from="4 Players" to="4 Players" method="OnPress"]

@@ -1,14 +1,17 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/RayCastTest.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/Camera.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/PlayerBodyRaycast.gd" type="Script" id=2]
+[ext_resource path="res://default_env.tres" type="Environment" id=3]
+[ext_resource path="res://Scripts/Camera.gd" type="Script" id=4]
 
 [sub_resource type="CapsuleShape" id=1]
 
+[sub_resource type="CapsuleMesh" id=2]
+
 [node name="KinematicPlayer" type="KinematicBody"]
 script = ExtResource( 1 )
-speed = 5
+kick_force = 20
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
@@ -20,21 +23,27 @@ cast_to = Vector3( -1, 0, 0 )
 script = ExtResource( 2 )
 
 [node name="ViewportContainer" type="ViewportContainer" parent="."]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 stretch = true
 
 [node name="Viewport" type="Viewport" parent="ViewportContainer"]
-size = Vector2( 1200, 800 )
+size = Vector2( 1024, 600 )
 handle_input_locally = false
 render_target_update_mode = 3
 
 [node name="Camera" type="Camera" parent="ViewportContainer/Viewport"]
+environment = ExtResource( 3 )
 current = true
-script = ExtResource( 3 )
+fov = 90.0
+script = ExtResource( 4 )
 
 [node name="Tween" type="Tween" parent="ViewportContainer/Viewport/Camera"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
+mesh = SubResource( 2 )
+material/0 = null
 [connection signal="on_wallrun" from="." to="ViewportContainer/Viewport/Camera" method="on_wallrun"]
 [connection signal="on_hit" from="RayCast" to="." method="on_hit"]
 [connection signal="tween_started" from="ViewportContainer/Viewport/Camera/Tween" to="ViewportContainer/Viewport/Camera" method="_on_tween_started"]
