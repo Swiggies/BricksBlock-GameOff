@@ -4,6 +4,7 @@ extends Node
 
 var NumberOfPlayers = 2		# Total Number of Players
 
+
 enum COLLISION_LAYERS {
 	default, # Everythign should be here, unless necessary
 	player1,
@@ -32,13 +33,12 @@ func _ready():
 		# VISUAL_LAYERS[i] = pow(2, VISUAL_LAYERS[i])
 		VISUAL_LAYERS[i] = 1 << VISUAL_LAYERS[i]
 
-
 func all_collision_layer_bit_number():
 	return pow(2, COLLISION_LAYERS.size()) - 1
 
-
 func all_visual_layer_bit_number():
 	return pow(2, VISUAL_LAYERS.size()) - 1
+
 
 
 

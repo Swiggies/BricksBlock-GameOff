@@ -44,6 +44,14 @@ script = ExtResource( 4 )
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
 mesh = SubResource( 2 )
 material/0 = null
+
+[node name="Area" type="Area" parent="."]
+gravity_vec = Vector3( 0, 0, 0 )
+gravity = 0.0
+linear_damp = 0.0
+angular_damp = 0.0
+collision_layer = 31
+collision_mask = 31
 [connection signal="on_wallrun" from="." to="ViewportContainer/Viewport/Camera" method="on_wallrun"]
 [connection signal="on_hit" from="RayCast" to="." method="on_hit"]
 [connection signal="tween_started" from="ViewportContainer/Viewport/Camera/Tween" to="ViewportContainer/Viewport/Camera" method="_on_tween_started"]

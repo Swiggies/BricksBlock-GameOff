@@ -31,7 +31,7 @@ var myPlayerNumber = -1
 onready var myViewportContainer = get_node("ViewportContainer")
 onready var my_mesh = get_node("MeshInstance")
 
-var my_visual_layer
+#var my_visual_layer
 
 var controller_sensitivty = -5
 const deadzone = 0.1
@@ -42,20 +42,27 @@ func _ready():
 	setUpInitPosition()
 	setUpViewport()
 	setup_layers()
+	setup_area() # Call after setting up the layers
 	
 #	Setting some defaults used for wallrunning
 	default_acceleration = accelleration
 	default_decelleration = decelleration
 	default_speed = speed
-	
+
+func setup_area():
+	var area = get_node("Area")
+	var coll_shape = get_node("CollisionShape")
+	var coll = coll_shape.duplicate(DUPLICATE_USE_INSTANCING)
+	area.add_child(coll)
 
 func setup_layers():
 	#my_mesh.layers = pow(2, (myPlayerNumber + 2))
-	my_visual_layer = game_variables.VISUAL_LAYERS["player" + str(myPlayerNumber+1)]
+	#my_visual_layer = game_variables.VISUAL_LAYERS["player" + str(myPlayerNumber+1)]
 	#my_mesh.layers = my_visual_layer
 	
 	my_mesh.layers = game_variables.VISUAL_LAYERS["player" + str(myPlayerNumber+1)]
 	collision_layer += game_variables.COLLISION_LAYERS["player" + str(myPlayerNumber+1)]
+	collision_mask += game_variables.COLLISION_LAYERS.powerup
 	
 
 func setUpInitPosition():
@@ -71,10 +78,10 @@ func setUpViewport():
 		queue_free()
 	
 	# Set the anchor
-	myViewportContainer.anchor_left = 0 if myPlayerNumber % 2 == 0 else 0.5
-	myViewportContainer.anchor_right = 1 if myPlayerNumber % 2 == 1 else 0.5
-	myViewportContainer.anchor_top = 0 if myPlayerNumber < 2 else 0.5
-	myViewportContainer.anchor_bottom = 1
+	myViewportContainer.anchor_left = 0.0 if myPlayerNumber % 2 == 0 else 0.5
+	myViewportContainer.anchor_right = 1.0 if myPlayerNumber % 2 == 1 else 0.5
+	myViewportContainer.anchor_top = 0.0 if myPlayerNumber < 2 else 0.5
+	myViewportContainer.anchor_bottom = 1.0
 	
 	# Set Viewport Size (as all will have the same view port size, this could be calculated just once
 	# Though there's much of a performance hit either way
