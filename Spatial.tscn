@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://Textures/m7QiQ.png" type="Texture" id=2]
-[ext_resource path="res://Scripts/PlayerLoader.gd" type="Script" id=3]
-[ext_resource path="res://Scripts/PowerCubeBase.gd" type="Script" id=4]
+[ext_resource path="res://Scripts/PowerCubeBase.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/PlayerLoader.gd" type="Script" id=4]
+[ext_resource path="res://Scripts/Borders.gd" type="Script" id=5]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -23,7 +24,7 @@ size = Vector3( 20, 2, 20 )
 
 [sub_resource type="CubeMesh" id=7]
 
-[sub_resource type="BoxShape" id=9]
+[sub_resource type="BoxShape" id=8]
 
 [node name="Spatial" type="Spatial"]
 
@@ -81,15 +82,13 @@ editor/display_folded = true
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance2/StaticBody"]
 shape = SubResource( 6 )
 
-[node name="Player Loader" type="Node" parent="."]
-script = ExtResource( 3 )
-
-[node name="Test Powerups" type="Node" parent="."]
+[node name="Test Powerups" type="Spatial" parent="."]
+editor/display_folded = true
 
 [node name="Power Cube" type="CSGMesh" parent="Test Powerups"]
 transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 4.25694, 3.53076, -3.66389 )
 mesh = SubResource( 7 )
-script = ExtResource( 4 )
+script = ExtResource( 3 )
 
 [node name="Area" type="Area" parent="Test Powerups/Power Cube"]
 editor/display_folded = true
@@ -99,5 +98,13 @@ linear_damp = 0.0
 angular_damp = 0.0
 
 [node name="CollisionShape" type="CollisionShape" parent="Test Powerups/Power Cube/Area"]
-shape = SubResource( 9 )
+shape = SubResource( 8 )
+
+[node name="Managers" type="Node" parent="."]
+
+[node name="Player Loader" type="Node" parent="Managers"]
+script = ExtResource( 4 )
+
+[node name="Border Creator" type="Node" parent="Managers"]
+script = ExtResource( 5 )
 [connection signal="area_entered" from="Test Powerups/Power Cube/Area" to="Test Powerups/Power Cube" method="_on_area_entered"]

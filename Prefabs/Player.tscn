@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/PlayerBodyRaycast.gd" type="Script" id=2]
 [ext_resource path="res://default_env.tres" type="Environment" id=3]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=4]
+[ext_resource path="res://Fonts/new_dynamicfont.tres" type="DynamicFont" id=5]
 
 [sub_resource type="CapsuleShape" id=1]
 
@@ -37,6 +38,72 @@ environment = ExtResource( 3 )
 current = true
 fov = 90.0
 script = ExtResource( 4 )
+
+[node name="HUD" type="Node" parent="ViewportContainer/Viewport/Camera"]
+editor/display_folded = true
+
+[node name="Health BG" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD"]
+position = Vector2( 10, 15 )
+points = PoolVector2Array( 0, 0, 10, 10, 160, 10 )
+default_color = Color( 0.578125, 0.578125, 0.578125, 1 )
+texture_mode = 0
+
+[node name="Outline" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+show_behind_parent = true
+position = Vector2( -1, 0 )
+points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
+width = 12.0
+default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
+texture_mode = 0
+
+[node name="Outline2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+show_behind_parent = true
+points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
+width = 12.0
+default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
+texture_mode = 0
+
+[node name="Outline3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+show_behind_parent = true
+position = Vector2( 1, 0 )
+points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
+width = 12.0
+default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
+texture_mode = 0
+
+[node name="Label" type="Label" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+margin_left = 18.89
+margin_top = -11.39
+margin_right = 107.89
+margin_bottom = 21.61
+custom_fonts/font = ExtResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "100%"
+
+[node name="Health FG" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 140, 10 )
+default_color = Color( 1, 0.784314, 0.784314, 1 )
+texture_mode = 0
+
+[node name="Health FG2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 120, 10 )
+default_color = Color( 1, 0.588235, 0.588235, 1 )
+texture_mode = 0
+
+[node name="Health FG3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 100, 10 )
+default_color = Color( 1, 0.392157, 0.392157, 1 )
+texture_mode = 0
+
+[node name="Health FG4" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 80, 10 )
+default_color = Color( 1, 0.196078, 0.196078, 1 )
+texture_mode = 0
+
+[node name="Health FG5" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 60, 10 )
+default_color = Color( 0.941176, 0, 0, 1 )
+texture_mode = 0
 
 [node name="Tween" type="Tween" parent="ViewportContainer/Viewport/Camera"]
 

@@ -15,5 +15,9 @@ func _ready():
 		# Just to test the culling mask.
 		# TODO: Remove this after it has been approved.
 		player.set_translation(Vector3(i + 1 * 5, 5, i + 1 * 5 + rand_range(-1, 1)))
+	
+	# Tell that players have been loaded
+	game_variables.player_loaded = true
+	
 	# Delete this node now
 	queue_free()

@@ -3,6 +3,7 @@
 extends Node
 
 var NumberOfPlayers = 2		# Total Number of Players
+var player_loaded = false
 
 
 enum COLLISION_LAYERS {
@@ -21,6 +22,14 @@ enum VISUAL_LAYERS {
 	player4,
 }
 
+var PLYAER_COLOR = {
+	"player1": "ff0037",
+	"player2": "00ff37",
+	"player3": "37ffff",
+	"player4": "ffff37",
+}
+
+
 func _ready():
 	
 	# Make the values of the collision layer bitwise ordered
@@ -38,8 +47,6 @@ func all_collision_layer_bit_number():
 
 func all_visual_layer_bit_number():
 	return pow(2, VISUAL_LAYERS.size()) - 1
-
-
 
 
 # Not needed anymore, left for ref purposes
