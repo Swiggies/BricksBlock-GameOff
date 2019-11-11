@@ -46,6 +46,7 @@ func _ready():
 	default_decelleration = decelleration
 	default_speed = speed
 	my_mesh.layers = myPlayerNumber * 2 + 2
+	print("spawned")
 
 func setUpInitPosition():
 	# Random position to prevent the player from colliding into each other and get thrown off due to physics
@@ -155,9 +156,10 @@ func process_input(delta):
 		vel.y = jump_force
 
 func knockback(dir):
-	#when you get hit override the input
-	#lower/higher% health makes ytou lose control for longer
-	pass
+	var new_dir = translation - dir
+	new_dir = new_dir.normalized()
+	print(new_dir)
+	vel = new_dir * 10
 
 func on_hit(hit, dir, normal):
 	ray_hit = hit

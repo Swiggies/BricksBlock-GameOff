@@ -51,7 +51,7 @@ func knockback_other():
 	var result = get_world().direct_space_state.intersect_ray(from, to, [self])
 	if not result.empty():
 		print("Other player gets knocked back")
-#		print(result.get("collider").get_parent().translate(Vector3(0,50,0)))
+		result.get("collider").knockback(translation)
 		
 func rotate_cam_x(x_rotation):
 	rotation_degrees.x = clamp(rotation_degrees.x + rad2deg(x_rotation / 100), -90, 90)
