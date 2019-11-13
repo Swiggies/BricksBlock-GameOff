@@ -1,3 +1,6 @@
+""" Split Screen Border
+Creates the split screen border
+"""
 extends Node
 
 onready var game_variables = get_node("/root/GameVariables")

@@ -63,26 +63,33 @@ func setup_layers():
 	my_mesh.layers = game_variables.VISUAL_LAYERS["player" + str(myPlayerNumber+1)]
 	collision_layer += game_variables.COLLISION_LAYERS["player" + str(myPlayerNumber+1)]
 	collision_mask += game_variables.COLLISION_LAYERS.powerup
-	
+
 
 func setUpInitPosition():
 	# Random position to prevent the player from colliding into each other and get thrown off due to physics
-	# A Temp Fix. Should be spawned at predetermined designated positions 
+	# A Temp Fix. Should be spawned at predetermined designated positions
 	# translation = Vector3(rand_range(-5, 5), 1, rand_range(-5, 5))
 	rotation = Vector3.ZERO
-	
+
 
 func setUpViewport():
 	# Legacy Code - Deletes any extra player instantiated
-	if myPlayerNumber < 0 or myPlayerNumber > game_variables.NumberOfPlayers - 1:
+	var screen_num = -1
+	for i in game_variables.PLYAER_JOY_ID:
+		if game_variables.PLYAER_JOY_ID[i] != -1:
+			screen_num += 1
+		if i == myPlayerNumber:
+			break
+	
+	if screen_num < 0 or screen_num > game_variables.NumberOfPlayers - 1:
 		queue_free()
-	
+
 	# Set the anchor
-	myViewportContainer.anchor_left = 0.0 if myPlayerNumber % 2 == 0 else 0.5
-	myViewportContainer.anchor_right = 1.0 if myPlayerNumber % 2 == 1 else 0.5
-	myViewportContainer.anchor_top = 0.0 if myPlayerNumber < 2 else 0.5
+	myViewportContainer.anchor_left = 0.0 if screen_num % 2 == 0 else 0.5
+	myViewportContainer.anchor_right = 1.0 if screen_num % 2 == 1 else 0.5
+	myViewportContainer.anchor_top = 0.0 if screen_num < 2 else 0.5
 	myViewportContainer.anchor_bottom = 1.0
-	
+
 	# Set Viewport Size (as all will have the same view port size, this could be calculated just once
 	# Though there's much of a performance hit either way
 	var size = get_viewport().size
@@ -90,22 +97,22 @@ func setUpViewport():
 	viewportSize.x /= 2 if game_variables.NumberOfPlayers > 1 else 1
 	viewportSize.y /= 2 if game_variables.NumberOfPlayers == 4 else 1
 	myViewportContainer.rect_size = viewportSize
-	
+
 	# Set Position
-	myViewportContainer.rect_position.x = 0 if myPlayerNumber % 2 == 0 else viewportSize.x
-	myViewportContainer.rect_position.y = 0 if myPlayerNumber < 2 else viewportSize.y
+	myViewportContainer.rect_position.x = 0 if screen_num % 2 == 0 else viewportSize.x
+	myViewportContainer.rect_position.y = 0 if screen_num < 2 else viewportSize.y
 
 func _process(delta):
 	process_input(delta)
 	wallrun()
 	process_movement(delta)
-	
+
 func wallrun():
 	emit_signal("on_wallrun", wallrun_dir, ray_hit)
 	if(ray_hit):
 		accelleration = air_acceleration
 		decelleration = air_decelleration
-		
+
 		vel.y = 0
 		var dir_dot = wall_normal.dot(transform.basis.x)
 		direction = wall_normal.cross(transform.basis.y) * -round(dir_dot)
@@ -115,29 +122,29 @@ func wallrun():
 		else:
 			if Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
 				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
-				
+
 	elif is_on_floor():
 		accelleration = default_acceleration
 		decelleration = default_decelleration
-	
-func process_movement(delta):	
+
+func process_movement(delta):
 	direction.y = 0
 	direction = direction.normalized()
-	
+
 	vel.y += delta * gravity
-	
+
 	var hvel = vel
 	hvel.y = 0
-	
+
 	var target = direction
 	target *= speed
-	
+
 	var accel
 	if direction.dot(hvel) > 0:
 		accel = accelleration
 	else:
 		accel = decelleration
-	
+
 	hvel = hvel.linear_interpolate(target, accel * delta)
 	vel.x = hvel.x
 	vel.z = hvel.z
@@ -145,9 +152,9 @@ func process_movement(delta):
 
 func process_input(delta):
 	direction = Vector3()
-		
+
 	input_movement = Vector2()
-	
+
 	if myPlayerNumber == 0:
 		if Input.is_action_pressed("move_forward"):
 			input_movement.y += 1
@@ -158,14 +165,14 @@ func process_input(delta):
 		if Input.is_action_pressed("move_left"):
 			input_movement.x -= 1
 	else:
-		if abs(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LX)) > deadzone or abs(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LY)) > deadzone:
-			input_movement = Vector2(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LX), -Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LY))
-		
+		if abs(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LX)) > deadzone or abs(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LY)) > deadzone:
+			input_movement = Vector2(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LX), -Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LY))
+
 	input_movement = input_movement.normalized()
-	
+
 	direction += -transform.basis.z * input_movement.y
 	direction += transform.basis.x * input_movement.x
-	
+
 	if myPlayerNumber == 0:
 		if Input.is_action_just_pressed("ui_accept"):
 			vel.y = jump_force
