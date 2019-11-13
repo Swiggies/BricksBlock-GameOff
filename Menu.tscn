@@ -1,27 +1,91 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Scripts/MenuPlayerSelection.gd" type="Script" id=1]
+[ext_resource path="res://UI Icons/play_button.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/MenuPlayerSelection.gd" type="Script" id=2]
+[ext_resource path="res://UI Icons/white_player.svg" type="Texture" id=3]
+[ext_resource path="res://Scripts/MenuBGCamera.gd" type="Script" id=4]
+[ext_resource path="res://Spatial.tscn" type="PackedScene" id=5]
 
-[node name="Control" type="Control"]
+[node name="Menu" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
+[node name="1 Players" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -38.0
+margin_top = -96.15
+margin_right = 38.0
+margin_bottom = -26.1499
+icon = ExtResource( 1 )
+flat = true
+script = ExtResource( 2 )
+NumberOfPlayers = 1
+
+[node name="player1_icon" type="Sprite" parent="1 Players"]
+modulate = Color( 1, 0, 0.215686, 1 )
+position = Vector2( -69.9441, -46.0701 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 3 )
+
+[node name="player2_icon" type="Sprite" parent="1 Players"]
+modulate = Color( 0, 1, 0.215686, 1 )
+position = Vector2( -0.414185, -46.0701 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 3 )
+
+[node name="player3_icon" type="Sprite" parent="1 Players"]
+modulate = Color( 0.215686, 1, 1, 1 )
+position = Vector2( 71.9558, -46.0701 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 3 )
+
+[node name="player4_icon" type="Sprite" parent="1 Players"]
+modulate = Color( 1, 1, 0.215686, 1 )
+position = Vector2( 144.796, -46.0697 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 3 )
+
+[node name="cyan_player5" type="Sprite" parent="1 Players"]
+modulate = Color( 0.560784, 0.560784, 0.560784, 1 )
+position = Vector2( 207.486, -46.0697 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 3 )
+
 [node name="2 Players" type="Button" parent="."]
-margin_left = 109.0
-margin_top = 63.0
-margin_right = 937.0
-margin_bottom = 203.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -125.0
+margin_top = 15.9177
+margin_right = 125.0
+margin_bottom = 115.918
 text = "2 Players"
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 NumberOfPlayers = 2
 
 [node name="4 Players" type="Button" parent="."]
-margin_left = 109.0
-margin_top = 287.85
-margin_right = 937.0
-margin_bottom = 427.85
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -125.0
+margin_top = 155.918
+margin_right = 125.0
+margin_bottom = 255.918
 text = "4 Players"
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 NumberOfPlayers = 4
+
+[node name="Menu BG Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 0, 0 )
+script = ExtResource( 4 )
+
+[node name="Spatial" parent="Menu BG Camera" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, -25 )
+[connection signal="pressed" from="1 Players" to="1 Players" method="OnPress"]
 [connection signal="pressed" from="2 Players" to="2 Players" method="OnPress"]
 [connection signal="pressed" from="4 Players" to="4 Players" method="OnPress"]

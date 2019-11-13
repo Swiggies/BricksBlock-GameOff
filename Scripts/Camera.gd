@@ -3,7 +3,9 @@ extends Camera
 export var sensitivty = 0.1
 
 onready var TweenNode = get_node("Tween")
+onready var game_variables = get_node("/root/GameVariables")
 onready var my_player_number = get_parent().get_parent().get_parent().myPlayerNumber
+onready var my_player = get_parent().get_parent().get_parent()
 var start_y
 var timer = 0
 var is_tweening = false
@@ -20,7 +22,7 @@ func _ready():
 	start_y = translation.y
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	translation = get_parent().get_parent().get_parent().translation + camera_offset
-	cull_mask -= (my_player_number * 2 + 2)
+	cull_mask -= game_variables.VISUAL_LAYERS["player" + str(my_player.myPlayerNumber+1)]
 
 ## Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):

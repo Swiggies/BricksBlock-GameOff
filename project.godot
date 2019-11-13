@@ -21,7 +21,11 @@ config/icon="res://Textures/icon.png"
 
 [autoload]
 
-PlayerVariables="*res://Scripts/PlayerVariables.gd"
+GameVariables="*res://Scripts/GameVariables.gd"
+
+[display]
+
+window/dpi/allow_hidpi=true
 
 [input]
 

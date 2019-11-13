@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/PlayerBodyRaycast.gd" type="Script" id=2]
-[ext_resource path="res://Scripts/Camera.gd" type="Script" id=3]
+[ext_resource path="res://default_env.tres" type="Environment" id=3]
+[ext_resource path="res://Scripts/Camera.gd" type="Script" id=4]
+[ext_resource path="res://Fonts/new_dynamicfont.tres" type="DynamicFont" id=5]
 
 [sub_resource type="CapsuleShape" id=1]
 
@@ -34,18 +36,91 @@ render_target_update_mode = 3
 shadow_atlas_size = 1024
 
 [node name="Camera" type="Camera" parent="ViewportContainer/Viewport"]
+environment = ExtResource( 3 )
 current = true
 fov = 90.0
-far = 500.0
-script = ExtResource( 3 )
+script = ExtResource( 4 )
+
+[node name="HUD" type="Node" parent="ViewportContainer/Viewport/Camera"]
+editor/display_folded = true
+
+[node name="Health BG" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD"]
+position = Vector2( 10, 15 )
+points = PoolVector2Array( 0, 0, 10, 10, 160, 10 )
+default_color = Color( 0.578125, 0.578125, 0.578125, 1 )
+texture_mode = 0
+
+[node name="Outline" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+show_behind_parent = true
+position = Vector2( -1, 0 )
+points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
+width = 12.0
+default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
+texture_mode = 0
+
+[node name="Outline2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+show_behind_parent = true
+points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
+width = 12.0
+default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
+texture_mode = 0
+
+[node name="Outline3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+show_behind_parent = true
+position = Vector2( 1, 0 )
+points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
+width = 12.0
+default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
+texture_mode = 0
+
+[node name="Label" type="Label" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+margin_left = 18.89
+margin_top = -11.39
+margin_right = 107.89
+margin_bottom = 21.61
+custom_fonts/font = ExtResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "100%"
+
+[node name="Health FG" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 140, 10 )
+default_color = Color( 1, 0.784314, 0.784314, 1 )
+texture_mode = 0
+
+[node name="Health FG2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 120, 10 )
+default_color = Color( 1, 0.588235, 0.588235, 1 )
+texture_mode = 0
+
+[node name="Health FG3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 100, 10 )
+default_color = Color( 1, 0.392157, 0.392157, 1 )
+texture_mode = 0
+
+[node name="Health FG4" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 80, 10 )
+default_color = Color( 1, 0.196078, 0.196078, 1 )
+texture_mode = 0
+
+[node name="Health FG5" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+points = PoolVector2Array( 0, 0, 10, 10, 60, 10 )
+default_color = Color( 0.941176, 0, 0, 1 )
+texture_mode = 0
 
 [node name="Tween" type="Tween" parent="ViewportContainer/Viewport/Camera"]
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
-layers = 0
 mesh = SubResource( 2 )
 material/0 = null
+
+[node name="Area" type="Area" parent="."]
+gravity_vec = Vector3( 0, 0, 0 )
+gravity = 0.0
+linear_damp = 0.0
+angular_damp = 0.0
+collision_layer = 31
+collision_mask = 31
 [connection signal="on_wallrun" from="." to="ViewportContainer/Viewport/Camera" method="on_wallrun"]
 [connection signal="on_hit" from="RayCast" to="." method="on_hit"]
 [connection signal="tween_started" from="ViewportContainer/Viewport/Camera/Tween" to="ViewportContainer/Viewport/Camera" method="_on_tween_started"]

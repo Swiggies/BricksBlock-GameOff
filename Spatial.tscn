@@ -1,8 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://Textures/m7QiQ.png" type="Texture" id=2]
-[ext_resource path="res://Scripts/PlayerLoader.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/PowerCubeBase.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/PlayerLoader.gd" type="Script" id=4]
+[ext_resource path="res://Scripts/Borders.gd" type="Script" id=5]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -20,6 +22,10 @@ size = Vector3( 20, 2, 20 )
 
 [sub_resource type="CylinderShape" id=6]
 
+[sub_resource type="CubeMesh" id=7]
+
+[sub_resource type="BoxShape" id=8]
+
 [node name="Spatial" type="Spatial"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -36,10 +42,7 @@ use_collision = true
 mesh = SubResource( 1 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.620874, 0.377652, -0.686946, 0, 0.876307, 0.481754, 0.78391, -0.299108, 0.544076, -4.82755, 2.15618, 0 )
-layers = 1048575
-light_bake_mode = 2
-light_cull_mask = 4293918721
+transform = Transform( 0.913337, 0.216468, -0.344901, 0.407175, -0.475437, 0.779851, 0.00483444, -0.852702, -0.522375, 0, 0, 0 )
 shadow_enabled = true
 shadow_bias = -0.05
 shadow_contact = 1.0
@@ -71,9 +74,34 @@ mesh = SubResource( 5 )
 material/0 = null
 
 [node name="StaticBody" type="StaticBody" parent="MeshInstance2"]
+editor/display_folded = true
 
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance2/StaticBody"]
 shape = SubResource( 6 )
 
-[node name="Node" type="Node" parent="."]
+[node name="Test Powerups" type="Spatial" parent="."]
+editor/display_folded = true
+
+[node name="Power Cube" type="CSGMesh" parent="Test Powerups"]
+transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 4.25694, 3.53076, -3.66389 )
+mesh = SubResource( 7 )
 script = ExtResource( 3 )
+
+[node name="Area" type="Area" parent="Test Powerups/Power Cube"]
+editor/display_folded = true
+gravity_vec = Vector3( 0, 0, 0 )
+gravity = 0.0
+linear_damp = 0.0
+angular_damp = 0.0
+
+[node name="CollisionShape" type="CollisionShape" parent="Test Powerups/Power Cube/Area"]
+shape = SubResource( 8 )
+
+[node name="Managers" type="Node" parent="."]
+
+[node name="Player Loader" type="Node" parent="Managers"]
+script = ExtResource( 4 )
+
+[node name="Border Creator" type="Node" parent="Managers"]
+script = ExtResource( 5 )
+[connection signal="area_entered" from="Test Powerups/Power Cube/Area" to="Test Powerups/Power Cube" method="_on_area_entered"]
