@@ -27,8 +27,15 @@ var PLYAER_COLOR = {
 	"player2": "00ff37",
 	"player3": "37ffff",
 	"player4": "ffff37",
+	"disconnected": "8f8f8f",
 }
 
+var PLYAER_JOY_ID = {
+    0: -1,
+    1: -1,
+    2: -1,
+    3: -1,
+}
 
 func _ready():
 	

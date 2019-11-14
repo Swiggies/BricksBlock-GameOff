@@ -14,7 +14,9 @@ var default_speed
 var air_decelleration = 4.5
 var air_acceleration = 4.5
 
-var percent_health
+var percent_health = 0
+signal on_health_change
+
 var camera
 signal on_wallrun
 var wallrun_dir
@@ -144,39 +146,44 @@ func process_movement(delta):
 	vel = move_and_slide(vel, Vector3(0,1,0), 0.05, 4, deg2rad(65))
 
 func process_input(delta):
-	direction = Vector3()
-		
-	input_movement = Vector2()
-	
-	if myPlayerNumber == 0:
-		if Input.is_action_pressed("move_forward"):
-			input_movement.y += 1
-		if Input.is_action_pressed("move_back"):
-			input_movement.y -= 1
-		if Input.is_action_pressed("move_right"):
-			input_movement.x += 1
-		if Input.is_action_pressed("move_left"):
-			input_movement.x -= 1
-	else:
-		if abs(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LX)) > deadzone or abs(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LY)) > deadzone:
-			input_movement = Vector2(Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LX), -Input.get_joy_axis(myPlayerNumber - 1, JOY_ANALOG_LY))
-		
-	input_movement = input_movement.normalized()
-	
-	direction += -transform.basis.z * input_movement.y
-	direction += transform.basis.x * input_movement.x
-	
-	if myPlayerNumber == 0:
-		if Input.is_action_just_pressed("ui_accept"):
-			vel.y = jump_force
-	elif Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
-		vel.y = jump_force
+    direction = Vector3()
 
-func knockback(dir):
+    input_movement = Vector2()
+
+    if myPlayerNumber == 0:
+        if Input.is_action_pressed("move_forward"):
+            input_movement.y += 1
+        if Input.is_action_pressed("move_back"):
+            input_movement.y -= 1
+        if Input.is_action_pressed("move_right"):
+            input_movement.x += 1
+        if Input.is_action_pressed("move_left"):
+            input_movement.x -= 1
+    else:
+        if abs(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LX)) > deadzone or abs(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LY)) > deadzone:
+            input_movement = Vector2(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LX), -Input.get_joy_axis(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_ANALOG_LY))
+
+    input_movement = input_movement.normalized()
+
+    direction += -transform.basis.z * input_movement.y
+    direction += transform.basis.x * input_movement.x
+
+    if myPlayerNumber == 0:
+        if Input.is_action_just_pressed("ui_accept"):
+            vel.y = jump_force
+    elif Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
+        vel.y = jump_force
+
+func charge(dir, force):
+	vel = dir * force
+
+func knockback(dir, distance):
 	var new_dir = translation - dir
-	new_dir = new_dir.normalized()
-	print(new_dir)
-	vel = new_dir * 10
+	var normalized_distance = inverse_lerp(5,0,distance)
+	new_dir = new_dir.normalized() * normalized_distance
+	percent_health += 10 * normalized_distance;
+	vel = new_dir * (percent_health)
+	emit_signal("on_health_change", percent_health)
 
 func on_hit(hit, dir, normal):
 	ray_hit = hit

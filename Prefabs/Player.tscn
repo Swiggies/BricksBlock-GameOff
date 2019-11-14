@@ -1,17 +1,20 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/PlayerBodyRaycast.gd" type="Script" id=2]
 [ext_resource path="res://default_env.tres" type="Environment" id=3]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=4]
-[ext_resource path="res://Fonts/new_dynamicfont.tres" type="DynamicFont" id=5]
+[ext_resource path="res://Scripts/PlayerHUD.gd" type="Script" id=5]
+[ext_resource path="res://Fonts/new_dynamicfont.tres" type="DynamicFont" id=6]
 
 [sub_resource type="CapsuleShape" id=1]
 
 [sub_resource type="CapsuleMesh" id=2]
 
 [node name="KinematicPlayer" type="KinematicBody"]
+collision/safe_margin = 0.1
 script = ExtResource( 1 )
+decelleration = 5
 kick_force = 20
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
@@ -42,7 +45,7 @@ fov = 90.0
 script = ExtResource( 4 )
 
 [node name="HUD" type="Node" parent="ViewportContainer/Viewport/Camera"]
-editor/display_folded = true
+script = ExtResource( 5 )
 
 [node name="Health BG" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD"]
 position = Vector2( 10, 15 )
@@ -78,7 +81,7 @@ margin_left = 18.89
 margin_top = -11.39
 margin_right = 107.89
 margin_bottom = 21.61
-custom_fonts/font = ExtResource( 5 )
+custom_fonts/font = ExtResource( 6 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "100%"
 
@@ -121,6 +124,8 @@ linear_damp = 0.0
 angular_damp = 0.0
 collision_layer = 31
 collision_mask = 31
+[connection signal="on_health_change" from="." to="ViewportContainer/Viewport/Camera/HUD" method="_on_health_change"]
+[connection signal="on_health_change" from="." to="ViewportContainer/Viewport/Camera" method="_on_health_change"]
 [connection signal="on_wallrun" from="." to="ViewportContainer/Viewport/Camera" method="on_wallrun"]
 [connection signal="on_hit" from="RayCast" to="." method="on_hit"]
 [connection signal="tween_started" from="ViewportContainer/Viewport/Camera/Tween" to="ViewportContainer/Viewport/Camera" method="_on_tween_started"]
