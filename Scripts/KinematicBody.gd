@@ -6,6 +6,7 @@ export var jump_force = 5
 export var accelleration = 4.5
 export var decelleration = 14
 export var kick_force = 50
+export var grid_shader : ShaderMaterial
 
 var default_acceleration
 var default_decelleration
@@ -101,6 +102,8 @@ func _process(delta):
 	process_input(delta)
 	wallrun()
 	process_movement(delta)
+	grid_shader.set_shader_param("pos"+str(myPlayerNumber),translation)
+	#grid_shader.set("pos"+str(myPlayerNumber), translation)
 	
 func wallrun():
 	emit_signal("on_wallrun", wallrun_dir, ray_hit)

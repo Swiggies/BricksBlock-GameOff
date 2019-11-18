@@ -1,30 +1,29 @@
 [gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
-[ext_resource path="res://Textures/m7QiQ.png" type="Texture" id=2]
+[ext_resource path="res://Shaders/Sphere.tres" type="Material" id=2]
 [ext_resource path="res://Scripts/PowerCubeBase.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/PlayerLoader.gd" type="Script" id=4]
 [ext_resource path="res://Scripts/Borders.gd" type="Script" id=5]
 
 [sub_resource type="CubeMesh" id=1]
 
-[sub_resource type="SpatialMaterial" id=2]
-albedo_texture = ExtResource( 2 )
-uv1_scale = Vector3( 15, 10, 1 )
-
-[sub_resource type="CubeMesh" id=3]
-material = SubResource( 2 )
+[sub_resource type="CubeMesh" id=2]
+material = ExtResource( 2 )
 size = Vector3( 100, 2, 100 )
 
-[sub_resource type="BoxShape" id=4]
+[sub_resource type="BoxShape" id=3]
 
-[sub_resource type="CylinderMesh" id=5]
+[sub_resource type="CylinderMesh" id=4]
 
-[sub_resource type="CylinderShape" id=6]
+[sub_resource type="CylinderShape" id=5]
 
-[sub_resource type="CubeMesh" id=7]
+[sub_resource type="CubeMesh" id=6]
 
-[sub_resource type="BoxShape" id=8]
+[sub_resource type="BoxShape" id=7]
+
+[sub_resource type="CubeMesh" id=8]
+material = ExtResource( 2 )
 
 [node name="Spatial" type="Spatial"]
 
@@ -48,42 +47,46 @@ shadow_bias = -0.05
 shadow_contact = 1.0
 
 [node name="Ground" type="MeshInstance" parent="."]
-mesh = SubResource( 3 )
+editor/display_folded = true
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00146103, 0, 0.0345287 )
+mesh = SubResource( 2 )
 material/0 = null
 
 [node name="KinematicBody" type="KinematicBody" parent="Ground"]
 
 [node name="CollisionShape" type="CollisionShape" parent="Ground/KinematicBody"]
 transform = Transform( 50, 0, 0, 0, 1, 0, 0, 0, 50, 0, 0, 0 )
-shape = SubResource( 4 )
+shape = SubResource( 3 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
+editor/display_folded = true
 transform = Transform( 5, 0, 0, 0, 4.44, 0, 0, 0, 5, -8.2064, 5.3019, -7.51209 )
-mesh = SubResource( 5 )
+mesh = SubResource( 4 )
 material/0 = null
 
 [node name="StaticBody" type="StaticBody" parent="MeshInstance"]
 
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance/StaticBody"]
-shape = SubResource( 6 )
+shape = SubResource( 5 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="."]
+editor/display_folded = true
 transform = Transform( 5, 0, 0, 0, 4.44, 0, 0, 0, 5, -9.33279, 5.3019, 11.4021 )
-mesh = SubResource( 5 )
+mesh = SubResource( 4 )
 material/0 = null
 
 [node name="StaticBody" type="StaticBody" parent="MeshInstance2"]
 editor/display_folded = true
 
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance2/StaticBody"]
-shape = SubResource( 6 )
+shape = SubResource( 5 )
 
 [node name="Test Powerups" type="Spatial" parent="."]
 editor/display_folded = true
 
 [node name="Power Cube" type="CSGMesh" parent="Test Powerups"]
 transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 4.25694, 3.53076, -3.66389 )
-mesh = SubResource( 7 )
+mesh = SubResource( 6 )
 script = ExtResource( 3 )
 
 [node name="Area" type="Area" parent="Test Powerups/Power Cube"]
@@ -94,7 +97,7 @@ linear_damp = 0.0
 angular_damp = 0.0
 
 [node name="CollisionShape" type="CollisionShape" parent="Test Powerups/Power Cube/Area"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Managers" type="Node" parent="."]
 
@@ -103,4 +106,9 @@ script = ExtResource( 4 )
 
 [node name="Border Creator" type="Node" parent="Managers"]
 script = ExtResource( 5 )
+
+[node name="MeshInstance3" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.427843, 1.937, 33.9929 )
+mesh = SubResource( 8 )
+material/0 = null
 [connection signal="area_entered" from="Test Powerups/Power Cube/Area" to="Test Powerups/Power Cube" method="_on_area_entered"]
