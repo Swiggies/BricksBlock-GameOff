@@ -2,8 +2,12 @@
 """
 extends Node
 
+const DEBUG_MODE = true
+
+
 var NumberOfPlayers = 2		# Total Number of Players
 var player_loaded = false
+var bound_rad = null
 
 
 enum COLLISION_LAYERS {

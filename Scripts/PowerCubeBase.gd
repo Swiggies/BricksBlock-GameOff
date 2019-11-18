@@ -32,5 +32,5 @@ func revolve(delta):
 
 
 func _on_area_entered(area):
-	print("Powerup collected via area")
+	print("Powerup collected via area, area = ", area)
 	queue_free()

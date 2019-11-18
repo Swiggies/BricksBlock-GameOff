@@ -14,7 +14,7 @@ func _process(delta):
 	if game_variables.player_loaded == false:
 		return
 	
-	for i in range(game_variables.NumberOfPlayers / 2):
+	for i in range(ceil(game_variables.NumberOfPlayers / 2.0)):
 		# Create a new Color Rect
 		var border = ColorRect.new()
 		

@@ -7,6 +7,15 @@ export var accelleration = 4.5
 export var decelleration = 14
 export var kick_force = 50
 
+
+export var bound_damage:Vector2 = Vector2(0.075, 0.150)
+export var bound_stuck_time:float = 3
+var bound_stuck_time_elapsed:float = 0
+var last_transform = null
+var bound_rebound:Vector3 = Vector3.ZERO
+var disable_movement:bool = false
+
+
 var default_acceleration
 var default_decelleration
 var default_speed
@@ -14,7 +23,7 @@ var default_speed
 var air_decelleration = 4.5
 var air_acceleration = 4.5
 
-var percent_health
+var percent_health = 0
 var camera
 signal on_wallrun
 var wallrun_dir
@@ -31,6 +40,9 @@ var myPlayerNumber = -1
 onready var myViewportContainer = get_node("ViewportContainer")
 onready var my_mesh = get_node("MeshInstance")
 
+onready var health_bar = get_node("ViewportContainer/Viewport/Camera/HUD/Health Bar")
+onready var electric_shock = get_node("MeshInstance/Electric Shock Effect")
+
 #var my_visual_layer
 
 var controller_sensitivty = -5
@@ -43,11 +55,27 @@ func _ready():
 	setUpViewport()
 	setup_layers()
 	setup_area() # Call after setting up the layers
+	get_bound_radius()
+	
+	# Default health
+	health_bar.health = 100.0
 	
 #	Setting some defaults used for wallrunning
 	default_acceleration = accelleration
 	default_decelleration = decelleration
 	default_speed = speed
+
+func get_bound_radius():
+	if not game_variables.bound_rad:
+		var level = get_tree().root.find_node("Spatial", false, false)
+		var sphere_parent = level.find_node("Sphere Bound", false, false) as Spatial
+		game_variables.bound_rad = abs(floor(sphere_parent.scale.x))
+		game_variables.bound_rad *= abs(floor((sphere_parent.get_child(1) as Spatial).scale.x))
+		
+		var coll_scale = get_node("CollisionShape").scale
+		game_variables.bound_rad -= max(coll_scale.x, max(coll_scale.y, coll_scale.z)) * 4.0
+		
+		print(game_variables.bound_rad)
 
 func setup_area():
 	var area = get_node("Area")
@@ -88,14 +116,14 @@ func setUpViewport():
 	myViewportContainer.anchor_left = 0.0 if screen_num % 2 == 0 else 0.5
 	myViewportContainer.anchor_right = 1.0 if screen_num % 2 == 1 else 0.5
 	myViewportContainer.anchor_top = 0.0 if screen_num < 2 else 0.5
-	myViewportContainer.anchor_bottom = 1.0
+	myViewportContainer.anchor_bottom = 0.5 if screen_num < 2 else 1.0
 
 	# Set Viewport Size (as all will have the same view port size, this could be calculated just once
 	# Though there's much of a performance hit either way
 	var size = get_viewport().size
 	var viewportSize = size
 	viewportSize.x /= 2 if game_variables.NumberOfPlayers > 1 else 1
-	viewportSize.y /= 2 if game_variables.NumberOfPlayers == 4 else 1
+	viewportSize.y /= 2 if game_variables.NumberOfPlayers > 2 else 1
 	myViewportContainer.rect_size = viewportSize
 
 	# Set Position
@@ -106,6 +134,36 @@ func _process(delta):
 	process_input(delta)
 	wallrun()
 	process_movement(delta)
+	check_bound(delta)
+
+func check_bound(delta):
+	if translation.distance_to(Vector3.ZERO) > game_variables.bound_rad:
+		direction = Vector3.ZERO
+		vel = Vector3.ZERO
+		disable_movement = true
+		
+		electric_shock.visible = true
+		health_bar.add_health(-rand_range(bound_damage.x, bound_damage.y) * delta * 100)
+		bound_stuck_time_elapsed += delta
+		if last_transform == null:
+			translation = translation.normalized() * game_variables.bound_rad
+			last_transform = transform
+		if bound_stuck_time_elapsed <= bound_stuck_time:
+			transform = last_transform
+		else:
+			bound_rebound = (Vector3.ZERO - translation).normalized()
+			translation +=  bound_rebound * delta * 10.0
+	else:
+		electric_shock.visible = false
+		if last_transform and bound_stuck_time_elapsed <= bound_stuck_time * 1.5:
+			bound_stuck_time_elapsed += delta
+			move_and_collide(bound_rebound * delta * 50.0)
+			bound_rebound -= bound_rebound * delta * 3.0
+			bound_rebound.y += delta * gravity * 0.025
+			return
+		bound_stuck_time_elapsed = 0
+		last_transform = null
+		disable_movement = false
 
 func wallrun():
 	emit_signal("on_wallrun", wallrun_dir, ray_hit)
@@ -120,7 +178,7 @@ func wallrun():
 			if Input.is_action_just_pressed("ui_accept"):
 				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
 		else:
-			if Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
+			if Input.is_joy_button_pressed(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_R):
 				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
 
 	elif is_on_floor():
@@ -128,6 +186,8 @@ func wallrun():
 		decelleration = default_decelleration
 
 func process_movement(delta):
+	if disable_movement:
+		return
 	direction.y = 0
 	direction = direction.normalized()
 
@@ -179,10 +239,14 @@ func process_input(delta):
 	elif Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
 		vel.y = jump_force
 
-func knockback(dir):
-	#when you get hit override the input
-	#lower/higher% health makes ytou lose control for longer
-	pass
+func knockback(dir, distance):
+	var new_dir = translation - dir
+	var normalized_distance = inverse_lerp(5,0,distance)
+	new_dir = new_dir.normalized() * normalized_distance
+	percent_health += 10 * normalized_distance;
+	vel = new_dir * (percent_health)
+	emit_signal("on_health_change", percent_health)
+
 
 func on_hit(hit, dir, normal):
 	ray_hit = hit

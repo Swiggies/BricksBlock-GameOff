@@ -9,6 +9,9 @@ var shake_strength = 20
 
 
 func OnPress():
+	if game_variables.NumberOfPlayers < 2 and not game_variables.DEBUG_MODE:
+		return
+	
 	get_tree().change_scene("res://Spatial.tscn")
 	if get_tree().root.get_node("/root/Menu"):
 		get_tree().root.remove_child(get_tree().root.get_node("/root/Menu"))
@@ -17,7 +20,8 @@ func _ready():
 	var numDevices = Input.get_connected_joypads().size()
 	var deviceIDs = Input.get_connected_joypads()
 	for i in range(numDevices):
-		game_variables.PLYAER_JOY_ID[i] = deviceIDs[i]
+		if Input.is_joy_known(deviceIDs[i]):
+			game_variables.PLYAER_JOY_ID[i] = deviceIDs[i]
 
 	# Add a listner for joy connect/disconnect event
 	Input.connect("joy_connection_changed", self, "_joy_connection_changed")
@@ -26,7 +30,7 @@ func _joy_connection_changed(id, connected):
 	# If a new controller is connected, add it to PLYAER_JOY_ID dict
 	# else remove it from the dict
 	if(connected):
-		if id in game_variables.PLYAER_JOY_ID.values():
+		if id in game_variables.PLYAER_JOY_ID.values() or not Input.is_joy_known(id):
 			return
 		for i in game_variables.PLYAER_JOY_ID:
 			if game_variables.PLYAER_JOY_ID[i] == -1:
@@ -51,7 +55,7 @@ func _process(delta):
 	game_variables.NumberOfPlayers = 0
 	var key = ""
 	for i in game_variables.PLYAER_JOY_ID:
-		if game_variables.PLYAER_JOY_ID[i] == -1:
+		if game_variables.PLYAER_JOY_ID[i] < 0:
 			key = "disconnected"
 			last_connection_status[i] = false
 		else:
@@ -72,24 +76,15 @@ func shake_child(node, n):
 	n += 1
 	var timer = get_tree().create_timer(0.02)
 	timer.connect("timeout", self, "shake_child", [node, n])
-	
+
 
 
 ### FOR TESTING PURPOSES ONLY ###
-var flag = false
+var flag = 1
 func _input(event):
 	if not event is InputEventKey or not event.pressed or event.echo:
 		return
-	if event.scancode == KEY_1:
-		flag = !flag
-		_joy_connection_changed(0, flag)
-	elif event.scancode == KEY_2:
-		flag = !flag
-		_joy_connection_changed(1, flag)
-	elif event.scancode == KEY_3:
-		flag = !flag
-		_joy_connection_changed(2, flag)
-	elif event.scancode == KEY_4:
-		flag = !flag
-		_joy_connection_changed(3, flag)
+	if event.scancode >= KEY_1 and event.scancode <= KEY_4:
+		game_variables.PLYAER_JOY_ID[event.scancode - 49] = event.scancode * flag
+		flag *= -1
 
