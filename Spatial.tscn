@@ -85,7 +85,6 @@ editor/display_folded = true
 shape = SubResource( 6 )
 
 [node name="Test Powerups" type="Spatial" parent="."]
-editor/display_folded = true
 
 [node name="Power Cube" type="CSGMesh" parent="Test Powerups"]
 transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 4.25694, 3.53076, -3.66389 )
@@ -114,4 +113,17 @@ script = ExtResource( 5 )
 
 [node name="Arena" parent="." instance=ExtResource( 7 )]
 transform = Transform( 0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0 )
+
+[node name="Bound Area" type="Area" parent="."]
+gravity_vec = Vector3( 0, 0, 0 )
+gravity = 0.0
+linear_damp = 0.0
+angular_damp = 0.0
+collision_layer = 1048575
+collision_mask = 1048575
+
+[node name="Bound Shape" type="CollisionShape" parent="Bound Area"]
 [connection signal="area_entered" from="Test Powerups/Power Cube/Area" to="Test Powerups/Power Cube" method="_on_area_entered"]
+[connection signal="area_entered" from="Bound Area" to="Test Powerups/Power Cube" method="_on_area_entered_sphere"]
+[connection signal="area_exited" from="Bound Area" to="Test Powerups/Power Cube" method="_on_area_exited_sphere"]
+[connection signal="ready" from="Bound Area" to="Test Powerups/Power Cube" method="something"]

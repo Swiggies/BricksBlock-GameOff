@@ -66,7 +66,7 @@ func all_visual_layer_bit_number():
 func _input(event):
 	if Input.is_action_just_pressed("ui_cancel"):
 		if get_tree().current_scene.name == "Spatial":
-			get_tree().root.print_tree()
+			#get_tree().root.print_tree()
 			while get_tree().root.get_child_count() > 1:
 				get_tree().root.remove_child(get_tree().root.get_child(1))
 			get_tree().change_scene("res://Menu.tscn")

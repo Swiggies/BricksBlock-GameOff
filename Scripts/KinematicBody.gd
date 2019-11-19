@@ -146,7 +146,7 @@ func check_bound(delta):
 		health_bar.add_health(-rand_range(bound_damage.x, bound_damage.y) * delta * 100)
 		bound_stuck_time_elapsed += delta
 		if last_transform == null:
-			translation = translation.normalized() * game_variables.bound_rad
+			#translation = translation.normalized() * (game_variables.bound_rad + 0.01)
 			last_transform = transform
 		if bound_stuck_time_elapsed <= bound_stuck_time:
 			transform = last_transform

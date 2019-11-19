@@ -30,3 +30,4 @@ func _ready():
 	
 	# Delete this node now
 	queue_free()
+

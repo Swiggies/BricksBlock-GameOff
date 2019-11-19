@@ -30,7 +30,28 @@ func _process(delta):
 func revolve(delta):
 	rotate_y(rotate_speed * delta)
 
-
 func _on_area_entered(area):
 	print("Powerup collected via area, area = ", area)
 	queue_free()
+
+
+
+### EXPERIMENTAL
+
+func something():
+	print(get_parent().get_parent().get_node("Bound Area/Bound Shape").shape)
+	var m = get_parent().get_parent().get_node("Sphere Bound/Icosphere").mesh
+	get_parent().get_parent().get_node("Bound Area/Bound Shape").shape = m.create_trimesh_shape()
+	print(get_parent().get_parent().get_node("Bound Area/Bound Shape").shape)
+	get_parent().get_parent().get_node("Bound Area/Bound Shape").scale = Vector3(14.0, 14.0, 14.0)
+
+
+
+func _on_area_entered_sphere(area):
+	print("Entered: ", area)
+
+
+func _on_area_exited_sphere(area):
+	print("Exited: ", area)
+
+
