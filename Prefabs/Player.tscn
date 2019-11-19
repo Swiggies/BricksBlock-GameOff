@@ -141,21 +141,25 @@ default_color = Color( 1, 0.784314, 0.784314, 1 )
 z_index = 1
 points = PoolVector2Array( 0, 0, 10, 10, 120, 10 )
 default_color = Color( 1, 0.588235, 0.588235, 1 )
+texture_mode = 0
 
 [node name="Health FG3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 z_index = 2
 points = PoolVector2Array( 0, 0, 10, 10, 100, 10 )
 default_color = Color( 1, 0.392157, 0.392157, 1 )
+texture_mode = 0
 
 [node name="Health FG4" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 z_index = 3
 points = PoolVector2Array( 0, 0, 10, 10, 80, 10 )
 default_color = Color( 1, 0.196078, 0.196078, 1 )
+texture_mode = 0
 
 [node name="Health FG5" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 z_index = 4
 points = PoolVector2Array( 0, 0, 10, 10, 60, 10 )
 default_color = Color( 0.827451, 0, 0, 1 )
+texture_mode = 0
 
 [node name="Tween" type="Tween" parent="ViewportContainer/Viewport/Camera"]
 

@@ -137,6 +137,7 @@ func _process(delta):
 	check_bound(delta)
 
 func check_bound(delta):
+	return
 	if translation.distance_to(Vector3.ZERO) > game_variables.bound_rad:
 		direction = Vector3.ZERO
 		vel = Vector3.ZERO
