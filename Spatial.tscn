@@ -1,10 +1,14 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://Shaders/Sphere.tres" type="Material" id=2]
 [ext_resource path="res://Scripts/PowerCubeBase.gd" type="Script" id=3]
 [ext_resource path="res://Scripts/PlayerLoader.gd" type="Script" id=4]
 [ext_resource path="res://Scripts/Borders.gd" type="Script" id=5]
+[ext_resource path="res://Prefabs/dome.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Prefabs/arena.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Scripts/Bound Area.gd" type="Script" id=8]
+[ext_resource path="res://sphere.tres" type="ArrayMesh" id=9]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -48,8 +52,8 @@ shadow_contact = 1.0
 
 [node name="Ground" type="MeshInstance" parent="."]
 editor/display_folded = true
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00146103, 0, 0.0345287 )
-mesh = SubResource( 2 )
+transform = Transform( 3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0 )
+mesh = SubResource( 3 )
 material/0 = null
 
 [node name="KinematicBody" type="KinematicBody" parent="Ground"]
@@ -82,7 +86,7 @@ editor/display_folded = true
 shape = SubResource( 5 )
 
 [node name="Test Powerups" type="Spatial" parent="."]
-editor/display_folded = true
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.97207, -0.76859, 2.43326 )
 
 [node name="Power Cube" type="CSGMesh" parent="Test Powerups"]
 transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 4.25694, 3.53076, -3.66389 )
@@ -90,7 +94,6 @@ mesh = SubResource( 6 )
 script = ExtResource( 3 )
 
 [node name="Area" type="Area" parent="Test Powerups/Power Cube"]
-editor/display_folded = true
 gravity_vec = Vector3( 0, 0, 0 )
 gravity = 0.0
 linear_damp = 0.0
@@ -100,6 +103,7 @@ angular_damp = 0.0
 shape = SubResource( 7 )
 
 [node name="Managers" type="Node" parent="."]
+editor/display_folded = true
 
 [node name="Player Loader" type="Node" parent="Managers"]
 script = ExtResource( 4 )
@@ -107,8 +111,25 @@ script = ExtResource( 4 )
 [node name="Border Creator" type="Node" parent="Managers"]
 script = ExtResource( 5 )
 
-[node name="MeshInstance3" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.427843, 1.937, 33.9929 )
-mesh = SubResource( 8 )
+[node name="Sphere Bound" parent="." instance=ExtResource( 6 )]
+
+[node name="Arena" parent="." instance=ExtResource( 7 )]
+transform = Transform( 0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0 )
+
+[node name="Bound Area" type="Area" parent="."]
+gravity_vec = Vector3( 0, 0, 0 )
+gravity = 0.0
+linear_damp = 0.0
+angular_damp = 0.0
+collision_layer = 1048575
+collision_mask = 1048575
+script = ExtResource( 8 )
+
+[node name="Bound Shape" type="CollisionShape" parent="Bound Area"]
+
+[node name="MeshInstance" type="MeshInstance" parent="Bound Area"]
+mesh = ExtResource( 9 )
 material/0 = null
 [connection signal="area_entered" from="Test Powerups/Power Cube/Area" to="Test Powerups/Power Cube" method="_on_area_entered"]
+[connection signal="area_entered" from="Bound Area" to="Bound Area" method="_on_Bound_Area_area_entered"]
+[connection signal="area_exited" from="Bound Area" to="Bound Area" method="_on_Bound_Area_area_exited"]

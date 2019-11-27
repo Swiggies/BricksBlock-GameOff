@@ -2,8 +2,12 @@
 """
 extends Node
 
+const DEBUG_MODE = true
+
+
 var NumberOfPlayers = 2		# Total Number of Players
 var player_loaded = false
+var bound_rad = null
 
 
 enum COLLISION_LAYERS {
@@ -25,9 +29,17 @@ enum VISUAL_LAYERS {
 var PLYAER_COLOR = {
 	"player1": "ff0037",
 	"player2": "00ff37",
-	"player3": "37ffff",
+	#"player3": "37ffff",
+	"player3": "007cff",
 	"player4": "ffff37",
 	"disconnected": "8f8f8f",
+}
+
+var PLYAER_JOY_ID = {
+	0: -1,
+	1: -1,
+	2: -1,
+	3: -1,
 }
 
 var PLYAER_JOY_ID = {
@@ -56,14 +68,17 @@ func all_visual_layer_bit_number():
 	return pow(2, VISUAL_LAYERS.size()) - 1
 
 
-# Not needed anymore, left for ref purposes
-"""
-var playersCalled = 0		# Used to help players get their player number
+### Experiment ###
+func _input(event):
+	if Input.is_action_just_pressed("ui_cancel"):
+		if get_tree().current_scene.name == "Spatial":
+			#get_tree().root.print_tree()
+			while get_tree().root.get_child_count() > 1:
+				get_tree().root.remove_child(get_tree().root.get_child(1))
+			get_tree().change_scene("res://Menu.tscn")
+			player_loaded = false
+			return
+		else:
+			get_tree().quit()
 
-func GetPlayerNumber():
-	# Players call this to get a player number
-	# NOTE: Calling this method incorrectly can break the game, casuing less the required number of players to instantiate
-	# We can instead index the caller and assign them number accordingly if we want to prevent this
-	playersCalled += 1
-	return NumberOfPlayers - playersCalled
-"""
+	

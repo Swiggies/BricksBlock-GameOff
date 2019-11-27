@@ -11,6 +11,74 @@
 [sub_resource type="CapsuleShape" id=1]
 
 [sub_resource type="CapsuleMesh" id=2]
+flip_faces = true
+
+[sub_resource type="Shader" id=3]
+code = "shader_type spatial;
+render_mode depth_draw_opaque, cull_disabled;
+
+uniform vec4 base_color:hint_color = vec4(0.48, 0.08, 0.88, 1.0);	// #7a14e0
+uniform vec4 second_color:hint_color = vec4(0.09, 0.25, 0.88, 1.0);	// #1741e1
+uniform float color_intensity:hint_range(0.1, 0.8) = 0.25;
+uniform float speed:hint_range(0.01, 2) = 0.25;
+uniform float width:hint_range(0.01, 1) = 0.01;
+uniform float noise:hint_range(1, 10) = 1.25;
+uniform float num_waves:hint_range(1, 10, 1) = 7;
+uniform float light_intensity:hint_range(5, 20) = 10;
+uniform float lightening_chance:hint_range(0.001, 0.1) = 0.005;
+
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+
+void fragment() {
+	float a = 1.0;
+	float w = width * 50.0;
+	float t = round(mod(TIME*speed, 1.0) * 100.0);
+	float x = round(UV.x * 100.0);
+	
+	if(width != 1.0){
+		//a = abs(t - x) <= w || abs(t - x) >= (100.0 - w) ? color_intensity : 0.0;
+		a = ((mod(x-t, (100.0/num_waves)) <= w*2.0) ? color_intensity : 0.0);
+	}
+	
+	
+    vec3 final_color = mix(base_color.rgb, second_color.rgb, rand(vec2(x, TIME)));
+	
+	
+    ALBEDO = final_color;
+    ALPHA = a;
+	//SPECULAR = 3.0;
+	AO = light_intensity/a;
+	AO *= rand(vec2(x, TIME)) < lightening_chance ?  100.0 : 1.0;
+}
+
+void vertex(){
+	vec3 world_pos = (WORLD_MATRIX * vec4(VERTEX, 0.0)).xyz;
+	vec3 vert = VERTEX;
+	vert.x += (rand(vert.yz * world_pos.yz) - 0.5) / 10.0 * noise;
+	vert.y += (rand(vert.zx * world_pos.zx) - 0.5) / 10.0 * noise;
+	vert.z += (rand(vert.xy * world_pos.xy) - 0.5) / 10.0 * noise;
+	VERTEX = vert;
+}
+	"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/base_color = Color( 0.48, 0.08, 0.88, 1 )
+shader_param/second_color = Color( 0.09, 0.25, 0.88, 1 )
+shader_param/color_intensity = 0.25
+shader_param/speed = 0.25
+shader_param/width = 0.01
+shader_param/noise = 1.25
+shader_param/num_waves = 7.0
+shader_param/light_intensity = 10.0
+shader_param/lightening_chance = 0.005
+
+[sub_resource type="CapsuleMesh" id=5]
+material = SubResource( 4 )
 
 [node name="KinematicPlayer" type="KinematicBody"]
 collision/safe_margin = 0.1
@@ -49,67 +117,55 @@ script = ExtResource( 5 )
 [node name="HUD" type="Node" parent="ViewportContainer/Viewport/Camera"]
 script = ExtResource( 6 )
 
-[node name="Health BG" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD"]
+[node name="Health Bar" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD"]
+editor/display_folded = true
 position = Vector2( 10, 15 )
 points = PoolVector2Array( 0, 0, 10, 10, 160, 10 )
-default_color = Color( 0.578125, 0.578125, 0.578125, 1 )
-texture_mode = 0
+default_color = Color( 0.627451, 0.627451, 0.627451, 1 )
+script = ExtResource( 5 )
 
-[node name="Outline" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+[node name="Outline" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 show_behind_parent = true
-position = Vector2( -1, 0 )
-points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
-width = 12.0
+position = Vector2( -1, 5.64 )
+points = PoolVector2Array( -3.60215, -1.10465, 7.94634, 10.6142, 162.146, 10.5253, 162.146, -1.752, 13.4852, -1.80319, 4.37952, -11.4306, -4.60475, -1.57853, -4.6558, -2.80366, 3.97114, -11.89 )
+width = 2.0
 default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
-texture_mode = 0
 
-[node name="Outline2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
-show_behind_parent = true
-points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
-width = 12.0
-default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
-texture_mode = 0
-
-[node name="Outline3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
-show_behind_parent = true
-position = Vector2( 1, 0 )
-points = PoolVector2Array( -0.685102, -0.762617, 10, 10, 160, 10 )
-width = 12.0
-default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
-texture_mode = 0
-
-[node name="Label" type="Label" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+[node name="HealthLabel" type="Label" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 margin_left = 18.89
 margin_top = -11.39
 margin_right = 107.89
 margin_bottom = 21.61
-custom_fonts/font = ExtResource( 7 )
+custom_fonts/font = ExtResource( 6 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "100%"
 
-[node name="Health FG" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+[node name="Health FG1" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 points = PoolVector2Array( 0, 0, 10, 10, 140, 10 )
 default_color = Color( 1, 0.784314, 0.784314, 1 )
-texture_mode = 0
 
-[node name="Health FG2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+[node name="Health FG2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
+z_index = 1
 points = PoolVector2Array( 0, 0, 10, 10, 120, 10 )
 default_color = Color( 1, 0.588235, 0.588235, 1 )
 texture_mode = 0
 
-[node name="Health FG3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+[node name="Health FG3" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
+z_index = 2
 points = PoolVector2Array( 0, 0, 10, 10, 100, 10 )
 default_color = Color( 1, 0.392157, 0.392157, 1 )
 texture_mode = 0
 
-[node name="Health FG4" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+[node name="Health FG4" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
+z_index = 3
 points = PoolVector2Array( 0, 0, 10, 10, 80, 10 )
 default_color = Color( 1, 0.196078, 0.196078, 1 )
 texture_mode = 0
 
-[node name="Health FG5" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health BG"]
+[node name="Health FG5" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
+z_index = 4
 points = PoolVector2Array( 0, 0, 10, 10, 60, 10 )
-default_color = Color( 0.941176, 0, 0, 1 )
+default_color = Color( 0.827451, 0, 0, 1 )
 texture_mode = 0
 
 [node name="Tween" type="Tween" parent="ViewportContainer/Viewport/Camera"]
@@ -117,6 +173,12 @@ texture_mode = 0
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
 mesh = SubResource( 2 )
+material/0 = null
+
+[node name="Electric Shock Effect" type="MeshInstance" parent="MeshInstance"]
+transform = Transform( 1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 0, 0, 0 )
+visible = false
+mesh = SubResource( 5 )
 material/0 = null
 
 [node name="Area" type="Area" parent="."]

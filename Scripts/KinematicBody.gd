@@ -8,6 +8,15 @@ export var decelleration = 14
 export var kick_force = 50
 export var grid_shader : ShaderMaterial
 
+
+export var bound_damage:Vector2 = Vector2(0.075, 0.150)
+export var bound_stuck_time:float = 3
+var bound_stuck_time_elapsed:float = 0
+var last_transform = null
+var bound_rebound:Vector3 = Vector3.ZERO
+var disable_movement:bool = false
+
+
 var default_acceleration
 var default_decelleration
 var default_speed
@@ -34,6 +43,9 @@ var myPlayerNumber = -1
 onready var myViewportContainer = get_node("ViewportContainer")
 onready var my_mesh = get_node("MeshInstance")
 
+onready var health_bar = get_node("ViewportContainer/Viewport/Camera/HUD/Health Bar")
+onready var electric_shock = get_node("MeshInstance/Electric Shock Effect")
+
 #var my_visual_layer
 
 var controller_sensitivty = -5
@@ -46,11 +58,27 @@ func _ready():
 	setUpViewport()
 	setup_layers()
 	setup_area() # Call after setting up the layers
+	get_bound_radius()
+	
+	# Default health
+	health_bar.health = 100.0
 	
 #	Setting some defaults used for wallrunning
 	default_acceleration = accelleration
 	default_decelleration = decelleration
 	default_speed = speed
+
+func get_bound_radius():
+	if not game_variables.bound_rad:
+		var level = get_tree().root.find_node("Spatial", false, false)
+		var sphere_parent = level.find_node("Sphere Bound", false, false) as Spatial
+		game_variables.bound_rad = abs(floor(sphere_parent.scale.x))
+		game_variables.bound_rad *= abs(floor((sphere_parent.get_child(1) as Spatial).scale.x))
+		
+		var coll_scale = get_node("CollisionShape").scale
+		game_variables.bound_rad -= max(coll_scale.x, max(coll_scale.y, coll_scale.z)) * 4.0
+		
+		print(game_variables.bound_rad)
 
 func setup_area():
 	var area = get_node("Area")
@@ -66,37 +94,44 @@ func setup_layers():
 	my_mesh.layers = game_variables.VISUAL_LAYERS["player" + str(myPlayerNumber+1)]
 	collision_layer += game_variables.COLLISION_LAYERS["player" + str(myPlayerNumber+1)]
 	collision_mask += game_variables.COLLISION_LAYERS.powerup
-	
+
 
 func setUpInitPosition():
 	# Random position to prevent the player from colliding into each other and get thrown off due to physics
-	# A Temp Fix. Should be spawned at predetermined designated positions 
+	# A Temp Fix. Should be spawned at predetermined designated positions
 	# translation = Vector3(rand_range(-5, 5), 1, rand_range(-5, 5))
 	rotation = Vector3.ZERO
-	
+
 
 func setUpViewport():
 	# Legacy Code - Deletes any extra player instantiated
-	if myPlayerNumber < 0 or myPlayerNumber > game_variables.NumberOfPlayers - 1:
+	var screen_num = -1
+	for i in game_variables.PLYAER_JOY_ID:
+		if game_variables.PLYAER_JOY_ID[i] != -1:
+			screen_num += 1
+		if i == myPlayerNumber:
+			break
+	
+	if screen_num < 0 or screen_num > game_variables.NumberOfPlayers - 1:
 		queue_free()
-	
+
 	# Set the anchor
-	myViewportContainer.anchor_left = 0.0 if myPlayerNumber % 2 == 0 else 0.5
-	myViewportContainer.anchor_right = 1.0 if myPlayerNumber % 2 == 1 else 0.5
-	myViewportContainer.anchor_top = 0.0 if myPlayerNumber < 2 else 0.5
-	myViewportContainer.anchor_bottom = 1.0
-	
+	myViewportContainer.anchor_left = 0.0 if screen_num % 2 == 0 else 0.5
+	myViewportContainer.anchor_right = 1.0 if screen_num % 2 == 1 else 0.5
+	myViewportContainer.anchor_top = 0.0 if screen_num < 2 else 0.5
+	myViewportContainer.anchor_bottom = 0.5 if screen_num < 2 else 1.0
+
 	# Set Viewport Size (as all will have the same view port size, this could be calculated just once
 	# Though there's much of a performance hit either way
 	var size = get_viewport().size
 	var viewportSize = size
 	viewportSize.x /= 2 if game_variables.NumberOfPlayers > 1 else 1
-	viewportSize.y /= 2 if game_variables.NumberOfPlayers == 4 else 1
+	viewportSize.y /= 2 if game_variables.NumberOfPlayers > 2 else 1
 	myViewportContainer.rect_size = viewportSize
-	
+
 	# Set Position
-	myViewportContainer.rect_position.x = 0 if myPlayerNumber % 2 == 0 else viewportSize.x
-	myViewportContainer.rect_position.y = 0 if myPlayerNumber < 2 else viewportSize.y
+	myViewportContainer.rect_position.x = 0 if screen_num % 2 == 0 else viewportSize.x
+	myViewportContainer.rect_position.y = 0 if screen_num < 2 else viewportSize.y
 
 func _process(delta):
 	process_input(delta)
@@ -110,7 +145,7 @@ func wallrun():
 	if(ray_hit):
 		accelleration = air_acceleration
 		decelleration = air_decelleration
-		
+
 		vel.y = 0
 		var dir_dot = wall_normal.dot(transform.basis.x)
 		direction = wall_normal.cross(transform.basis.y) * -round(dir_dot)
@@ -118,31 +153,33 @@ func wallrun():
 			if Input.is_action_just_pressed("ui_accept"):
 				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
 		else:
-			if Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
+			if Input.is_joy_button_pressed(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_R):
 				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
-				
+
 	elif is_on_floor():
 		accelleration = default_acceleration
 		decelleration = default_decelleration
-	
-func process_movement(delta):	
+
+func process_movement(delta):
+	if disable_movement:
+		return
 	direction.y = 0
 	direction = direction.normalized()
-	
+
 	vel.y += delta * gravity
-	
+
 	var hvel = vel
 	hvel.y = 0
-	
+
 	var target = direction
 	target *= speed
-	
+
 	var accel
 	if direction.dot(hvel) > 0:
 		accel = accelleration
 	else:
 		accel = decelleration
-	
+
 	hvel = hvel.linear_interpolate(target, accel * delta)
 	vel.x = hvel.x
 	vel.z = hvel.z

@@ -30,7 +30,12 @@ func _process(delta):
 func revolve(delta):
 	rotate_y(rotate_speed * delta)
 
-
 func _on_area_entered(area):
-	print("Powerup collected via area")
+	print("Powerup collected via area, area = ", area)
 	queue_free()
+
+
+
+
+
+
