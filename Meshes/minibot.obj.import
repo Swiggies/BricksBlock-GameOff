@@ -1,0 +1,18 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/minibot.obj-20ca8b25f509eae8e33dc42c7a83caa8.mesh"
+
+[deps]
+
+files=[ "res://.import/minibot.obj-20ca8b25f509eae8e33dc42c7a83caa8.mesh" ]
+
+source_file="res://Meshes/minibot.obj"
+dest_files=[ "res://.import/minibot.obj-20ca8b25f509eae8e33dc42c7a83caa8.mesh", "res://.import/minibot.obj-20ca8b25f509eae8e33dc42c7a83caa8.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+optimize_mesh=true

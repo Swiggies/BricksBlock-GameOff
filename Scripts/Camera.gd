@@ -30,9 +30,9 @@ func _physics_process(delta):
 	rotation.y = get_parent().get_parent().get_parent().rotation.y
 
 func _process(delta):
-	if abs(Input.get_joy_axis(my_player_number - 1, JOY_ANALOG_RX)) > deadzone or abs(Input.get_joy_axis(my_player_number - 1, JOY_ANALOG_RY)) > deadzone:
-		rotate_cam_y(Input.get_joy_axis(my_player_number - 1, JOY_ANALOG_RX) * controller_sensitivty)
-		rotate_cam_x(Input.get_joy_axis(my_player_number - 1, JOY_ANALOG_RY) * controller_sensitivty)
+	if abs(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[my_player_number], JOY_ANALOG_RX)) > deadzone or abs(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[my_player_number], JOY_ANALOG_RY)) > deadzone:
+		rotate_cam_y(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[my_player_number], JOY_ANALOG_RX) * controller_sensitivty)
+		rotate_cam_x(Input.get_joy_axis(game_variables.PLYAER_JOY_ID[my_player_number], JOY_ANALOG_RY) * controller_sensitivty)
 
 func _input(event):
 	if event.device != my_player_number:
@@ -52,8 +52,9 @@ func knockback_other():
 	var to = from + -global_transform.basis.z * 5
 	var result = get_world().direct_space_state.intersect_ray(from, to, [self])
 	if not result.empty():
-		print("Other player gets knocked back")
+		#print("Other player gets knocked back")
 #		print(result.get("collider").get_parent().translate(Vector3(0,50,0)))
+		pass
 		
 func rotate_cam_x(x_rotation):
 	rotation_degrees.x = clamp(rotation_degrees.x + rad2deg(x_rotation / 100), -90, 90)

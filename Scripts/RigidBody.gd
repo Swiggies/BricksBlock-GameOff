@@ -17,5 +17,5 @@ func _physics_process(delta):
 	else:
 		direction = Vector3(0,0,0)
 		
-	print(direction)	
+	#print(direction)	
 	#velocity

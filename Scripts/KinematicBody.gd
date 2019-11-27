@@ -10,6 +10,7 @@ export var kick_force = 50
 
 export var bound_damage:Vector2 = Vector2(0.075, 0.150)
 export var bound_stuck_time:float = 3
+export var out_of_bound = false
 var bound_stuck_time_elapsed:float = 0
 var last_transform = null
 var bound_rebound:Vector3 = Vector3.ZERO
@@ -42,6 +43,7 @@ onready var my_mesh = get_node("MeshInstance")
 
 onready var health_bar = get_node("ViewportContainer/Viewport/Camera/HUD/Health Bar")
 onready var electric_shock = get_node("MeshInstance/Electric Shock Effect")
+onready var player_model = get_node("MeshInstance")
 
 #var my_visual_layer
 
@@ -50,12 +52,15 @@ const deadzone = 0.1
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# Apply the model colors
+	player_model.apply_color(myPlayerNumber)
+	
 #	Used for splitscreensetupmyPlayerNumber
 	setUpInitPosition()
 	setUpViewport()
 	setup_layers()
 	setup_area() # Call after setting up the layers
-	get_bound_radius()
+	# get_bound_radius()
 	
 	# Default health
 	health_bar.health = 100.0
@@ -75,7 +80,7 @@ func get_bound_radius():
 		var coll_scale = get_node("CollisionShape").scale
 		game_variables.bound_rad -= max(coll_scale.x, max(coll_scale.y, coll_scale.z)) * 4.0
 		
-		print(game_variables.bound_rad)
+		#print(game_variables.bound_rad)
 
 func setup_area():
 	var area = get_node("Area")
@@ -134,9 +139,12 @@ func _process(delta):
 	process_input(delta)
 	wallrun()
 	process_movement(delta)
-	check_bound(delta)
+	# check_bound(delta)
+	if out_of_bound:
+		electricude_me(delta)
 
 func check_bound(delta):
+	### FOR BACK UP ONLY
 	return
 	if translation.distance_to(Vector3.ZERO) > game_variables.bound_rad:
 		direction = Vector3.ZERO
@@ -165,6 +173,35 @@ func check_bound(delta):
 		bound_stuck_time_elapsed = 0
 		last_transform = null
 		disable_movement = false
+
+func electricude_me(delta):
+	if bound_stuck_time_elapsed <= bound_stuck_time:
+		direction = Vector3.ZERO
+		vel = Vector3.ZERO
+		disable_movement = true
+		
+		electric_shock.visible = true
+		health_bar.add_health(-rand_range(bound_damage.x, bound_damage.y) * delta * 100)
+		bound_stuck_time_elapsed += delta
+		if last_transform == null:
+			last_transform = transform
+		if bound_stuck_time_elapsed <= bound_stuck_time:
+			transform = last_transform
+		else:
+			bound_rebound = (Vector3.ZERO - translation).normalized()
+			translation +=  bound_rebound * delta * 10.0
+	else:
+		electric_shock.visible = false
+		if last_transform and bound_stuck_time_elapsed <= bound_stuck_time * 1.5:
+			bound_stuck_time_elapsed += delta
+			move_and_collide(bound_rebound * delta * 50.0)
+			bound_rebound -= bound_rebound * delta * 3.0
+			bound_rebound.y += delta * gravity * 0.025
+			return
+		bound_stuck_time_elapsed = 0
+		last_transform = null
+		disable_movement = false
+		out_of_bound = false
 
 func wallrun():
 	emit_signal("on_wallrun", wallrun_dir, ray_hit)
@@ -216,7 +253,7 @@ func process_input(delta):
 
 	input_movement = Vector2()
 
-	if myPlayerNumber == 0:
+	if myPlayerNumber == 0 && game_variables.DEBUG_MODE:
 		if Input.is_action_pressed("move_forward"):
 			input_movement.y += 1
 		if Input.is_action_pressed("move_back"):
@@ -234,10 +271,10 @@ func process_input(delta):
 	direction += -transform.basis.z * input_movement.y
 	direction += transform.basis.x * input_movement.x
 
-	if myPlayerNumber == 0:
+	if myPlayerNumber == 0 && game_variables.DEBUG_MODE:
 		if Input.is_action_just_pressed("ui_accept"):
 			vel.y = jump_force
-	elif Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
+	elif Input.is_joy_button_pressed(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_R):
 		vel.y = jump_force
 
 func knockback(dir, distance):

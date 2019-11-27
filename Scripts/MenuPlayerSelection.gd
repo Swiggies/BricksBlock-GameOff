@@ -82,6 +82,8 @@ func shake_child(node, n):
 ### FOR TESTING PURPOSES ONLY ###
 var flag = 1
 func _input(event):
+	if not game_variables.DEBUG_MODE:
+		return
 	if not event is InputEventKey or not event.pressed or event.echo:
 		return
 	if event.scancode >= KEY_1 and event.scancode <= KEY_4:

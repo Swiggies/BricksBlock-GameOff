@@ -13,15 +13,19 @@ func _ready():
 	if player_coll:
 		scale -= player_coll.scale * 2.0
 	scale -= Vector3(0.5, 0.5, 0.5)
-	print(shape.shape)
-	print(scale)
+	#print(shape.shape)
+	#print(scale)
 	get_node("MeshInstance").queue_free()
 
 
 
 func _on_Bound_Area_area_entered(area):
-	print("Entered: ", (area.get_parent() as Node).name)
+	area = area.get_parent() as Node
+	
 
 
 func _on_Bound_Area_area_exited(area):
-	print("Exited: ", (area.get_parent() as Node).name)
+	area = area.get_parent() as Node
+	#print("Exited: ", area.name)
+	if area is KinematicBody:
+		area.out_of_bound = true

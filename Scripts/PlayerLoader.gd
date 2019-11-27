@@ -18,12 +18,12 @@ func _ready():
 			playerID += 1
 		player.myPlayerNumber = playerID
 		playerID += 1
-		player.set_translation(Vector3(i + 1 * 5, 5, i + 1 * 5))
+		player.set_translation(Vector3(i * 2, 5, i * 3 + 10))
 		get_tree().root.add_child(player)
 		
 		# Just to test the culling mask.
 		# TODO: Remove this after it has been approved.
-		player.set_translation(Vector3(i + 1 * 5, 5, i + 1 * 5 + rand_range(-1, 1)))
+		#player.set_translation(Vector3(i + 1 * 5, 5, i + 1 * 5 + rand_range(-1, 1)))
 	
 	# Tell that players have been loaded
 	game_variables.player_loaded = true

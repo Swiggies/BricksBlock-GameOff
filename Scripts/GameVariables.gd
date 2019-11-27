@@ -29,8 +29,8 @@ enum VISUAL_LAYERS {
 var PLYAER_COLOR = {
 	"player1": "ff0037",
 	"player2": "00ff37",
-	#"player3": "37ffff",
-	"player3": "007cff",
+	"player3": "37ffff",
+	#"player3": "007cff",
 	"player4": "ffff37",
 	"disconnected": "8f8f8f",
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/PlayerBodyRaycast.gd" type="Script" id=2]
@@ -6,12 +6,11 @@
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=4]
 [ext_resource path="res://Scripts/HUDHealthBG.gd" type="Script" id=5]
 [ext_resource path="res://Fonts/new_dynamicfont.tres" type="DynamicFont" id=6]
-[ext_resource path="res://Meshes/minibot.obj" type="ArrayMesh" id=7]
-[ext_resource path="res://Materials/PlayerColorMat.tres" type="Material" id=8]
-[ext_resource path="res://Materials/PlayerCommonColor.tres" type="Material" id=9]
-[ext_resource path="res://Scripts/PlyaerMatInitializer.gd" type="Script" id=10]
 
 [sub_resource type="CapsuleShape" id=1]
+
+[sub_resource type="CapsuleMesh" id=2]
+flip_faces = true
 
 [sub_resource type="Shader" id=3]
 code = "shader_type spatial;
@@ -94,7 +93,6 @@ cast_to = Vector3( -1, 0, 0 )
 script = ExtResource( 2 )
 
 [node name="ViewportContainer" type="ViewportContainer" parent="."]
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 stretch = true
@@ -117,7 +115,6 @@ editor/display_folded = true
 position = Vector2( 10, 15 )
 points = PoolVector2Array( 0, 0, 10, 10, 160, 10 )
 default_color = Color( 0.627451, 0.627451, 0.627451, 1 )
-texture_mode = 0
 script = ExtResource( 5 )
 
 [node name="Outline" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
@@ -169,29 +166,9 @@ texture_mode = 0
 [node name="Tween" type="Tween" parent="ViewportContainer/Viewport/Camera"]
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
-mesh = ExtResource( 7 )
-material/0 = ExtResource( 8 )
-material/1 = ExtResource( 9 )
-material/2 = ExtResource( 8 )
-material/3 = ExtResource( 8 )
-material/4 = ExtResource( 8 )
-material/5 = ExtResource( 8 )
-material/6 = null
-material/7 = null
-material/8 = null
-material/9 = null
-material/10 = ExtResource( 9 )
-material/11 = ExtResource( 9 )
-material/12 = ExtResource( 9 )
-material/13 = ExtResource( 9 )
-material/14 = ExtResource( 9 )
-material/15 = ExtResource( 8 )
-material/16 = ExtResource( 8 )
-material/17 = ExtResource( 8 )
-material/18 = ExtResource( 8 )
-material/19 = null
-script = ExtResource( 10 )
+transform = Transform( 0.5, 0, 0, 0, -2.18557e-008, -0.5, 0, 0.5, -2.18557e-008, 0, 0, 0 )
+mesh = SubResource( 2 )
+material/0 = null
 
 [node name="Electric Shock Effect" type="MeshInstance" parent="MeshInstance"]
 transform = Transform( 1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 0, 0, 0 )
