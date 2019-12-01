@@ -67,6 +67,7 @@ func _ready():
 	default_acceleration = accelleration
 	default_decelleration = decelleration
 	default_speed = speed
+	get_node("RayCast").game_variables = game_variables
 
 func get_bound_radius():
 	if not game_variables.bound_rad:
@@ -138,7 +139,6 @@ func _process(delta):
 	wallrun()
 	process_movement(delta)
 	grid_shader.set_shader_param("pos"+str(myPlayerNumber),translation)
-	#grid_shader.set("pos"+str(myPlayerNumber), translation)
 	
 func wallrun():
 	emit_signal("on_wallrun", wallrun_dir, ray_hit)
@@ -148,7 +148,7 @@ func wallrun():
 
 		vel.y = 0
 		var dir_dot = wall_normal.dot(transform.basis.x)
-		direction = wall_normal.cross(transform.basis.y) * -round(dir_dot)
+		direction += wall_normal.cross(transform.basis.y) * -round(dir_dot)
 		if myPlayerNumber == 0:
 			if Input.is_action_just_pressed("ui_accept"):
 				vel = wall_normal * kick_force + (Vector3(0,0,kick_force) * -transform.basis.z) + (Vector3.UP * 5)
@@ -190,7 +190,7 @@ func process_input(delta):
 
     input_movement = Vector2()
 
-    if myPlayerNumber == 0:
+    if myPlayerNumber == -1:
         if Input.is_action_pressed("move_forward"):
             input_movement.y += 1
         if Input.is_action_pressed("move_back"):
@@ -211,7 +211,7 @@ func process_input(delta):
     if myPlayerNumber == 0:
         if Input.is_action_just_pressed("ui_accept"):
             vel.y = jump_force
-    elif Input.is_joy_button_pressed(myPlayerNumber - 1, JOY_R):
+    elif Input.is_joy_button_pressed(game_variables.PLYAER_JOY_ID[myPlayerNumber], JOY_R):
         vel.y = jump_force
 
 func charge(dir, force):

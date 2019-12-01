@@ -11,6 +11,7 @@ uniform vec3 pos0 = vec3(10,0,10);
 uniform vec3 pos1 = vec3(10,0,10);
 uniform vec3 pos2 = vec3(10,0,10);
 uniform vec3 pos3 = vec3(10,0,10);
+
 uniform float transition_distance : hint_range(0,100);
 uniform float transition_falloff : hint_range(0,100);
 
@@ -63,7 +64,7 @@ void fragment() {
     // Akhil's Edit
     vec3 view_distort = (final_color + VIEW)/2.0;
 	
-    ALBEDO = final_color * view_distort;
+    ALBEDO = (final_color * view_distort) * 10.0;
 	EMISSION = (vec3(1.0,1.0,1.0) * 10.0) * final_dist * final_color;
     ALPHA = base_color.a;
 }

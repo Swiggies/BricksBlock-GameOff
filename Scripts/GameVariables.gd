@@ -42,13 +42,6 @@ var PLYAER_JOY_ID = {
 	3: -1,
 }
 
-var PLYAER_JOY_ID = {
-    0: -1,
-    1: -1,
-    2: -1,
-    3: -1,
-}
-
 func _ready():
 	
 	# Make the values of the collision layer bitwise ordered

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Scripts/KinematicBody.gd" type="Script" id=1]
 [ext_resource path="res://Shaders/Sphere.tres" type="Material" id=2]
@@ -6,7 +6,8 @@
 [ext_resource path="res://default_env.tres" type="Environment" id=4]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=5]
 [ext_resource path="res://Scripts/PlayerHUD.gd" type="Script" id=6]
-[ext_resource path="res://Fonts/new_dynamicfont.tres" type="DynamicFont" id=7]
+[ext_resource path="res://Scripts/HUDHealthBG.gd" type="Script" id=7]
+[ext_resource path="res://Scripts/InputEventTest.gd" type="Script" id=8]
 
 [sub_resource type="CapsuleShape" id=1]
 
@@ -122,7 +123,8 @@ editor/display_folded = true
 position = Vector2( 10, 15 )
 points = PoolVector2Array( 0, 0, 10, 10, 160, 10 )
 default_color = Color( 0.627451, 0.627451, 0.627451, 1 )
-script = ExtResource( 5 )
+texture_mode = -1039925248
+script = ExtResource( 7 )
 
 [node name="Outline" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 show_behind_parent = true
@@ -130,19 +132,20 @@ position = Vector2( -1, 5.64 )
 points = PoolVector2Array( -3.60215, -1.10465, 7.94634, 10.6142, 162.146, 10.5253, 162.146, -1.752, 13.4852, -1.80319, 4.37952, -11.4306, -4.60475, -1.57853, -4.6558, -2.80366, 3.97114, -11.89 )
 width = 2.0
 default_color = Color( 0.415686, 0.415686, 0.415686, 1 )
+texture_mode = 0
 
 [node name="HealthLabel" type="Label" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 margin_left = 18.89
 margin_top = -11.39
 margin_right = 107.89
 margin_bottom = 21.61
-custom_fonts/font = ExtResource( 6 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "100%"
 
 [node name="Health FG1" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 points = PoolVector2Array( 0, 0, 10, 10, 140, 10 )
 default_color = Color( 1, 0.784314, 0.784314, 1 )
+texture_mode = -1039925248
 
 [node name="Health FG2" type="Line2D" parent="ViewportContainer/Viewport/Camera/HUD/Health Bar"]
 z_index = 1
@@ -188,8 +191,11 @@ linear_damp = 0.0
 angular_damp = 0.0
 collision_layer = 31
 collision_mask = 31
-[connection signal="on_health_change" from="." to="ViewportContainer/Viewport/Camera/HUD" method="_on_health_change"]
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource( 8 )
 [connection signal="on_health_change" from="." to="ViewportContainer/Viewport/Camera" method="_on_health_change"]
+[connection signal="on_health_change" from="." to="ViewportContainer/Viewport/Camera/HUD" method="_on_health_change"]
 [connection signal="on_wallrun" from="." to="ViewportContainer/Viewport/Camera" method="on_wallrun"]
 [connection signal="on_hit" from="RayCast" to="." method="on_hit"]
 [connection signal="tween_started" from="ViewportContainer/Viewport/Camera/Tween" to="ViewportContainer/Viewport/Camera" method="_on_tween_started"]
